@@ -4,8 +4,7 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --always --tags)"
 CC?=$(CROSS_COMPILE)gcc
 AR?=$(CROSS_COMPILE)ar
 #uncomment the line below to create debug versions by default
-#DEBUG=1
-#COVERAGE=1
+DEBUG=1
 
 OBJDIR = build
 BINDIR = cgi-bin
@@ -17,7 +16,7 @@ LIBS	=  #-ljson-c
 
 CFLAGS ?= -Wall -Wno-nonnull 
 CPPFLAGS += -D _GNU_SOURCE -I src/include
-#LDFLAGS ?= -pthread 
+LDFLAGS ?= -pthread 
 #LDFLAGS ?= -lcgi -L $(OBJDIR) -pthread 
 
 # If debug is defined, disable optimization level
@@ -27,10 +26,6 @@ ifndef DEBUG
 else
 	CFLAGS	+= -O0 -g
 	CPPFLAGS += -D DEBUG -D VERSION=\"$(VERSION)$(VERSUFF)\ $(GIT_VERSION)\"
-
-	ifdef COVERAGE
-		CFLAGS += -coverage
-	endif
 endif
 
 VPATH	= src/site:
@@ -55,6 +50,7 @@ $(BINDIR):
 # Include dependency files, automatically generate them if needed.
 -include $(addprefix $(OBJDIR)/,$(sources:.c=.d))
 
+#temp off, linked version does not work
 menu: $(addprefix $(OBJDIR)/,menu.o) | $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
 
