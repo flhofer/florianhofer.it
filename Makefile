@@ -10,7 +10,7 @@ AR?=$(CROSS_COMPILE)ar
 OBJDIR = build
 BINDIR = cgi-bin
 
-sources = main.c
+sources = menu.c
 
 TARGETS = $(sources:.c=)
 LIBS	=  #-ljson-c
@@ -55,7 +55,7 @@ $(BINDIR):
 # Include dependency files, automatically generate them if needed.
 -include $(addprefix $(OBJDIR)/,$(sources:.c=.d))
 
-main: $(addprefix $(OBJDIR)/,main.o)
+menu: $(addprefix $(OBJDIR)/,menu.o) | $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
 
 CLEANUP  = $(TARGETS) *.o .depend *.*~ *.orig *.rej *.d *.a *.gcno *.gcda *.gcov
