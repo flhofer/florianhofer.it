@@ -1,4 +1,4 @@
-VERSION = 0.66
+VERSION = 0.1
 VERSUFF = "-beta"
 GIT_VERSION := "$(shell git describe --abbrev=7 --always --tags)"
 CC?=$(CROSS_COMPILE)gcc
@@ -22,7 +22,7 @@ CPPFLAGS += -D _GNU_SOURCE -I src/include
 
 # If debug is defined, disable optimization level
 ifndef DEBUG
-	CFLAGS	+= -O0
+	CFLAGS	+= -O2
 	CPPFLAGS += -D VERSION=\"$(VERSION)\"
 else
 	CFLAGS	+= -O0 -g
