@@ -1,7 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h>
 
-void main () {
+int main () {
     printf ("Content-Type: text/html\n\n"
 			"<html><head><title>www.florianhofer.it</title></head>\n"
 			"<body>This page is temporarly offline. (check back in a month)\n"

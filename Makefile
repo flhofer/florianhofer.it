@@ -4,23 +4,25 @@ GIT_VERSION := "$(shell git describe --abbrev=7 --always --tags)"
 CC?=$(CROSS_COMPILE)gcc
 AR?=$(CROSS_COMPILE)ar
 #uncomment the line below to create debug versions by default
-DEBUG=1
-COVERAGE=1
+#DEBUG=1
+#COVERAGE=1
 
-OBJDIR = cgi-bin
+OBJDIR = build
+BINDIR = cgi-bin
 
 sources = main.c
 
 TARGETS = $(sources:.c=)
-LIBS	= -ljson-c
+LIBS	=  #-ljson-c
 
 CFLAGS ?= -Wall -Wno-nonnull 
 CPPFLAGS += -D _GNU_SOURCE -I src/include
-LDFLAGS ?= -lcgi -L $(OBJDIR) -pthread 
+#LDFLAGS ?= -pthread 
+#LDFLAGS ?= -lcgi -L $(OBJDIR) -pthread 
 
 # If debug is defined, disable optimization level
 ifndef DEBUG
-	CFLAGS	+= -O2
+	CFLAGS	+= -O0
 	CPPFLAGS += -D VERSION=\"$(VERSION)\"
 else
 	CFLAGS	+= -O0 -g
@@ -30,6 +32,9 @@ else
 		CFLAGS += -coverage
 	endif
 endif
+
+VPATH	= src/site:
+VPATH	+= src/lib:
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) -c $< $(CFLAGS) $(CPPFLAGS) $(EXTRA_LIBS) -o $@
@@ -44,11 +49,17 @@ all: $(TARGETS)
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
+$(BINDIR):
+	mkdir -p $(BINDIR)
+
 # Include dependency files, automatically generate them if needed.
 -include $(addprefix $(OBJDIR)/,$(sources:.c=.d))
 
-main.c: $(addprefix $(OBJDIR)/,main.cgi)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(NUMA_LIBS)
+main: $(addprefix $(OBJDIR)/,main.o)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
+
+CLEANUP  = $(TARGETS) *.o .depend *.*~ *.orig *.rej *.d *.a *.gcno *.gcda *.gcov
+CLEANUP += $(if $(wildcard .git), ChangeLog)
 
 .PHONY: clean
 clean:
