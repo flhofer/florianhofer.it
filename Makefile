@@ -7,7 +7,7 @@ AR?=$(CROSS_COMPILE)ar
 DEBUG=1
 
 OBJDIR = build
-BINDIR = cgi-bin
+BINDIR = www/cgi-bin
 
 sources = menu.c
 
@@ -39,7 +39,8 @@ $(OBJDIR)/%.d: %.c | $(OBJDIR)
 	@$(CC) -MM $(CFLAGS) $(CPPFLAGS) $< | sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' > $@ || rm -f $@
 
 .PHONY: all
-all: $(TARGETS) 
+all: $(TARGETS)
+	chmod 755 www/cgi-bin/*.cgi 
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
@@ -54,7 +55,7 @@ $(BINDIR):
 menu: $(addprefix $(OBJDIR)/,menu.o) | $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
 
-CLEANUP  = $(TARGETS) *.o .depend *.*~ *.orig *.rej *.d *.a *.gcno *.gcda *.gcov
+CLEANUP  = $(TARGETS) *.o .depend *.*~ *.orig *.rej *.d *.a *.gcno *.gcda *.gcov *.cgi
 CLEANUP += $(if $(wildcard .git), ChangeLog)
 
 .PHONY: clean

@@ -41,6 +41,7 @@
 *.su
 *.idb
 *.pdb
+*.cgi
 
 # Kernel Module Compile Results
 *.mod*
@@ -50,7 +51,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-/Default/
+
+# Folders and others
 *.DS_Store
-/cgi-bin/
 /build/
+/www/cgi-bin/
+
