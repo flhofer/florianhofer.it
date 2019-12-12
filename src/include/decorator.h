@@ -8,6 +8,6 @@
 #ifndef _DECORATOR_H_
 	#define _DECORATOR_H_
 
-
+	int cgiHeader();
 
 #endif /* _DECORATOR_H_ */

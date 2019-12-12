@@ -16,8 +16,8 @@ LIBS	=  #-ljson-c
 
 CFLAGS ?= -Wall -Wno-nonnull 
 CPPFLAGS += -D _GNU_SOURCE -I src/include
-LDFLAGS ?= -pthread 
-#LDFLAGS ?= -lcgi -L $(OBJDIR) -pthread 
+#LDFLAGS ?= -pthread 
+LDFLAGS ?= -lmycgi -L $(OBJDIR) -pthread 
 
 # If debug is defined, disable optimization level
 ifndef DEBUG
