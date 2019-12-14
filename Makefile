@@ -12,7 +12,7 @@ BINDIR = www/cgi-bin
 sources = menu.c
 
 TARGETS = $(sources:.c=)
-LIBS	=  #-ljson-c
+LIBS	= -lmycgi #-lsqlite3 #-ljson-c
 
 CFLAGS ?= -Wall -Wno-nonnull 
 CPPFLAGS += -D _GNU_SOURCE -I src/include
@@ -40,7 +40,8 @@ $(OBJDIR)/%.d: %.c | $(OBJDIR)
 
 .PHONY: all
 all: $(TARGETS)
-	chmod 755 www/cgi-bin/*.cgi 
+	chmod 755 www/cgi-bin/*.cgi
+	chown 1000:1000 www/cgi-bin/*.cgi
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
@@ -52,8 +53,13 @@ $(BINDIR):
 -include $(addprefix $(OBJDIR)/,$(sources:.c=.d))
 
 #temp off, linked version does not work
-menu: $(addprefix $(OBJDIR)/,menu.o) | $(BINDIR)
+menu: $(addprefix $(OBJDIR)/,menu.o libmycgi.a) | $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
+
+# lib containing include lib in one binary file
+LIBOBJS =$(addprefix $(OBJDIR)/,decorator.o)
+$(OBJDIR)/libmycgi.a: $(LIBOBJS)
+	$(AR) rcs $@ $^
 
 CLEANUP  = $(TARGETS) *.o .depend *.*~ *.orig *.rej *.d *.a *.gcno *.gcda *.gcov *.cgi
 CLEANUP += $(if $(wildcard .git), ChangeLog)
