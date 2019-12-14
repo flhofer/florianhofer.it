@@ -120,6 +120,23 @@ static int readFile () {
     return 0;
 }
 
+const char * fileListName (int id) {
+
+	(void)readFile();
+
+	for (filed_t * cur = fhead; ((cur)); cur=cur->next){
+
+		if (id == cur->id) {
+			char* fn = strlen(cur->folder) + strlen(cur->filen) +2;
+			(void)strcat(fn, cur->folder);
+			(void)strcat(fn, "/");
+			(void)strcat(fn, cur->filen);
+			return fn;
+		}
+	}
+	return NULL;
+}
+
 void listFiles () {
 
 	(void)readFile();

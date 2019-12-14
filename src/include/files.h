@@ -9,6 +9,7 @@
 	#define _FILES_H_
 
 	void listFiles ();
+	const char * fileListName (int id);
 
 	#define FBUFSZ 1024
 
