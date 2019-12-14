@@ -57,7 +57,7 @@ menu: $(addprefix $(OBJDIR)/,menu.o libmycgi.a) | $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
 
 # lib containing include lib in one binary file
-LIBOBJS =$(addprefix $(OBJDIR)/,decorator.o)
+LIBOBJS =$(addprefix $(OBJDIR)/,decorator.o files.o)
 $(OBJDIR)/libmycgi.a: $(LIBOBJS)
 	$(AR) rcs $@ $^
 

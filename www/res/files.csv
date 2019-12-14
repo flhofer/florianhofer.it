@@ -1,2 +1,4 @@
-;;;;
-;;;;
+# ID;Title;Author;Year;Folder;Filename;Target
+1;Architecture, technologies and challenges for cyber-physical systems in Industry 4.0 - A systematic mapping study;F. Hofer;2018;papers;esem18.pdf;Hofer2018.pdf
+2;"Enhancing Security and Reliability for Smart-* Systems’ Architectures";F. Hofer;2018;papers;issre18.pdf;Hofer2018-2.pdf
+3;Industrial Control via Application Containers: Maintaining determinism in IAAS;F. Hofer, M. A. Sehr, A. Iannopollo, I. Ugalde, A. Sangiovanni-Vincentelli, B. Russo;2019;papers;cloudcom19pp.pdf;Hoferetal2019pp.pdf

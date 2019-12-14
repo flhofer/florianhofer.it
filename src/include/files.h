@@ -10,4 +10,6 @@
 
 	void listFiles ();
 
+	#define FBUFSZ 1024
+
 #endif /* _FILES_H_ */
