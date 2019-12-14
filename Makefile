@@ -9,7 +9,8 @@ DEBUG=1
 OBJDIR = build
 BINDIR = www/cgi-bin
 
-sources = menu.c
+sources = menu.c \
+		  display.c
 
 TARGETS = $(sources:.c=)
 LIBS	= -lmycgi #-lsqlite3 #-ljson-c
@@ -54,6 +55,9 @@ $(BINDIR):
 
 #temp off, linked version does not work
 menu: $(addprefix $(OBJDIR)/,menu.o libmycgi.a) | $(BINDIR)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
+
+display: $(addprefix $(OBJDIR)/,display.o libmycgi.a) | $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
 
 # lib containing include lib in one binary file

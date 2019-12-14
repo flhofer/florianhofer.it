@@ -73,7 +73,7 @@ static void getfields(char* buff) {
 
 		int cnt = 0;
 		// continue until end
-		while ((tok = strtok(NULL, ";\0"))){
+		while ((tok = strtok(NULL, ";\n"))){
 			switch (cnt) {
 				case 0:
 					fhead->title = strdup(tok);
@@ -96,8 +96,8 @@ static void getfields(char* buff) {
 			cnt++;
 		}
 		// delete element if incomplete or too big
-//		if (5 < cnt || 5 > cnt)
-//			pop((void**)fhead);
+		if (6 < cnt || 6 > cnt)
+			pop((void**)fhead);
     }
 }
 
@@ -127,9 +127,9 @@ const char * fileListName (int id) {
 	for (filed_t * cur = fhead; ((cur)); cur=cur->next){
 
 		if (id == cur->id) {
-			char* fn = strlen(cur->folder) + strlen(cur->filen) +2;
-			(void)strcat(fn, cur->folder);
-			(void)strcat(fn, "/");
+			char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2);
+			*fn = '\0';
+			(void)strcat(cur->folder, "/");
 			(void)strcat(fn, cur->filen);
 			return fn;
 		}
