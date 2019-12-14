@@ -10,6 +10,6 @@ I will develop this in spare time - it will take YEARS - however, bare with me. 
 
 - www contains the public site with compiled CSS, JS and CGI files. (disregard the php for now, it's not in use)
 - src C source 
-- *httpd.conf*  configuration for the httpd container on [Dockerhub](hub.docker.com)
+- *httpd.conf*  configuration for the httpd container on [Docker hub](https://hub.docker.com)
 - *rest*  configutation and build files for `make` and CDT
 
