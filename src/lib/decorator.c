@@ -40,8 +40,8 @@ static int menuMain() {
 
 int cgiFooter() {
 	cgiOut ("<div class=\"bnavbar\" id=\"bnav\">\n"
-			"&#9400; 2019 Florian Hofer. Proudly implemented using C\n"
-			"</div>\n");
+			"&#9400; 2019 Florian Hofer. Proudly implemented using C. V%s\n"
+			"</div>\n", VERSION);
 	cgiOut ("<script type=\"text/javascript\" src=\"../js/menu.js\"></script>\n"
 			"</body>\n"
 			"</html>");

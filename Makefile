@@ -1,5 +1,4 @@
 VERSION = 0.1
-VERSUFF = "-beta"
 GIT_VERSION := "$(shell git describe --abbrev=7 --always --tags)"
 CC?=$(CROSS_COMPILE)gcc
 AR?=$(CROSS_COMPILE)ar
@@ -26,7 +25,7 @@ ifndef DEBUG
 	CPPFLAGS += -D VERSION=\"$(VERSION)\"
 else
 	CFLAGS	+= -O0 -g
-	CPPFLAGS += -D DEBUG -D VERSION=\"$(VERSION)$(VERSUFF)\ $(GIT_VERSION)\"
+	CPPFLAGS += -D DEBUG -D VERSION=\"$(VERSION)\ Build\ $(GIT_VERSION)\"
 endif
 
 VPATH	= src/site:
