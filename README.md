@@ -14,7 +14,7 @@ I will develop this in spare time - it will take YEARS - however, bare with me. 
 
 Other files are configutation and build files for `make` and CDT.
 
-The master branch should more or less reflect what's loaded on the [domain](https://www.florianhofer.it/) at the moment. `develop` is the actual running development stage and can be jopyfully tried out by just running your very own Docker-container webserver.
+The master branch should more or less reflect what's loaded on the [domain](https://www.florianhofer.it/) at the moment. `develop` is the actual running development stage and can be joyfully tried out by just running your very own Docker-container webserver.
 Glar do receive any feedback or suggestions. Just write me at `website *at* florianhofer.it`
 
 Hope you enjoy!
