@@ -39,7 +39,7 @@ void pop(void ** head) {
 
 typedef struct filedata {
 	struct filedata * next;
-	int id;
+	int id;		// TODO: change id to 128 bit hash or use session ID
 	char* title;
 	char* author;
 	char* year;
@@ -127,8 +127,12 @@ const char * fileListName (int id) {
 	for (filed_t * cur = fhead; ((cur)); cur=cur->next){
 
 		if (id == cur->id) {
-			char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2);
+			char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
 			*fn = '\0';
+			// TODO: clean up the folder mess
+			(void)strcat(fn, "../htdocs/");
+			(void)strcat(fn, cur->folder);
+			(void)strcat(fn, "/");
 			(void)strcat(cur->folder, "/");
 			(void)strcat(fn, cur->filen);
 			return fn;
@@ -138,7 +142,7 @@ const char * fileListName (int id) {
 }
 
 void listFiles () {
-
+	// TODO: add session ID to force visiting site, or use hashes only
 	(void)readFile();
 
 	cgiOut("<div style=\"padding-left:16px\"><table>\n");

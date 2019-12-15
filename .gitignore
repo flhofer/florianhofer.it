@@ -57,3 +57,4 @@ dkms.conf
 /build/
 /www/cgi-bin/
 
+*.pdf
