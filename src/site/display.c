@@ -14,6 +14,8 @@
 #include "decorator.h"
 #include "files.h"
 
+#define TSNBUF 8096 // 8kb at a time
+
 int main () {
 	cgi_out = stdout;
 
@@ -52,12 +54,13 @@ int main () {
 
 		fflush(cgi_out); /* force it to go out */
 
+		// TODO: change to memread (heap) if size is contained < 10 MB
 		int fd = open(path, O_RDONLY);
 
-		char buf[1024];
+		char buf[TSNBUF];
 		int buflen;
 
-		while((buflen = read(fd, buf, 1024)) > 0) {
+		while((buflen = read(fd, buf, TSNBUF)) > 0) {
 			write(1, buf, buflen);
 		}
 

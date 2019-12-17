@@ -35,7 +35,7 @@ void pop(void ** head) {
     *head = next_node;
 }
 
-#define FILEDB "../htdocs/res/files.csv" // TODO: check, httpd specific
+#define FILEDB "../res/files.csv" // TODO: check, httpd specific
 
 typedef struct filedata {
 	struct filedata * next;
@@ -130,7 +130,7 @@ const char * fileListName (int id) {
 			char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
 			*fn = '\0';
 			// TODO: clean up the folder mess
-			(void)strcat(fn, "../htdocs/");
+			(void)strcat(fn, "../");
 			(void)strcat(fn, cur->folder);
 			(void)strcat(fn, "/");
 			(void)strcat(cur->folder, "/");
