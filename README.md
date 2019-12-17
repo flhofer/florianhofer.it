@@ -9,12 +9,12 @@ I will develop this in spare time - it will take YEARS - however, bare with me. 
 ## Directories
 
     .
-    ├── src						# Source files
-	|   ├── lib					# static library source code
-	|   ├── include				# header files for static library
-    |	└── site				# CGI script sources
-    ├── www						# contains the public site with compiled CSS, JS and CGI files.
-    ├── httpd.conf				# configuration for the `httpd` container on [Docker hub](https://hub.docker.com)
+    ├── src			# Source files
+    |   ├── lib			# static library source code
+    |   ├── include		# header files for static library
+    |   └── site		# CGI script sources
+    ├── www			# contains the public site with compiled CSS, JS and CGI files.
+    ├── httpd.conf		# configuration for the `httpd` container on [Docker hub](https://hub.docker.com)
     ├── LICENSE
     ├── MAKEFILE
     └── README.md
