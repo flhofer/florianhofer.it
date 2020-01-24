@@ -19,7 +19,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: www-binaries
-        path: www/cgi-bin/*.cgi
+        path: www/cgi-bin/
 
   deploy:
     name: Deploy to webserver
