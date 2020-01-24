@@ -41,7 +41,7 @@ $(OBJDIR)/%.d: %.c | $(OBJDIR)
 .PHONY: all
 all: $(TARGETS)
 	chmod 755 www/cgi-bin/*.cgi
-	chown 1000:1000 www/cgi-bin/*.cgi
+	#chown 1000:1000 www/cgi-bin/*.cgi commented for CI
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
