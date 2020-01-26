@@ -36,7 +36,7 @@ jobs:
         path: www/cgi-bin/
 
     - name: Push to ftp server
-    - uses: SamKirkland/FTP-Deploy-Action@2.0.0
+      uses: SamKirkland/FTP-Deploy-Action@2.0.0
       env:
         # FTP server name (you may need to specify a port)
         FTP_SERVER: www.florianhofer.it
