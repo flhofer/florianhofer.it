@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: Checkout and make CGI scripts of master
     - uses: actions/checkout@v1
-      run: make
+    - run: make
 
     - name: Upload compilation result for job 1
       uses: actions/upload-artifact@v1
@@ -24,7 +24,7 @@ jobs:
   deploy:
     name: Deploy to webserver
     runs-on: ubuntu-latest
-    	
+    
     steps:
     - name: Checkout repository
     - uses: actions/checkout@v1
