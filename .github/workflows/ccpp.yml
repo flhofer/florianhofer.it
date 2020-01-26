@@ -34,6 +34,9 @@ jobs:
       with:
         name: www-binaries
         path: www/cgi-bin/
+    
+    - name: Change permissions
+    - run: chmod 755 www/cgi-bin/*.cgi
 
     - name: Push to ftp server
       uses: SamKirkland/FTP-Deploy-Action@2.0.0
