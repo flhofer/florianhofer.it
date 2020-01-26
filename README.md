@@ -1,5 +1,7 @@
 # florianhofer.it - a Simple, challenging website
 
+![C/C++ CI](https://github.com/flhofer/florianhofer.it/workflows/C/C++%20CI/badge.svg?branch=master)
+
 The name says it all: a website development repository, yes. Maybe an attempt of me, a PhD student, to show off alternative ways. There are many paths to follow to create a website; probably the hardest is using C. 
 
 In this website implementation I create html output using C coded CGI scripts for apache compatible servers. So far there is no other techique in use than standard C, client-side JS and CSS. **No** external libraries, no cheats. Why do it the easy way if you can have it the hard? For sure, if you can manage this, dig deep into how web servers work, you can also do it the modern - reuse oriented - way.
