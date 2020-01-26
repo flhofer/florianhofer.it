@@ -7,12 +7,12 @@ on:
     
 jobs:
   build:
-
+    name: Rebuild CGI scripts
     runs-on: ubuntu-latest
     
     steps:
+    - name: Checkout and make CGI scripts of master
     - uses: actions/checkout@v1
-    - name: make CGI scripts of master
       run: make
 
     - name: Upload compilation result for job 1
@@ -25,25 +25,28 @@ jobs:
     name: Deploy to webserver
     runs-on: ubuntu-latest
     steps:
-      - name: Download math result for job 1
-        uses: actions/download-artifact@v1
-        with:
-          name: www-binaries
-          path: www/cgi-bin/
-      - name: Push to ftp server
-        uses: SamKirkland/FTP-Deploy-Action@2.0.0
-        env:
-          # FTP server name (you may need to specify a port)
-          FTP_SERVER: www.florianhofer.it
-          # FTP account username
-          FTP_USERNAME: ${{ secrets.WWW_FTPU }}
-          # FTP account password
-          FTP_PASSWORD: ${{ secrets.WWW_FTPP }}
-          # The local folder to copy, defaults to root project folder
-          LOCAL_DIR: www/
-          # The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here)
-          REMOTE_DIR: www.florianhofer.it/
-          # upload protocol
-          METHOD: ftp
-          # server port
-          PORT: 21
+#    - name: Checkout repository
+#    - uses: actions/checkout@v1
+
+	- name: Download result for job 1
+	  uses: actions/download-artifact@v1
+	  with:
+		name: www-binaries
+		path: www/cgi-bin/
+	- name: Push to ftp server
+	  uses: SamKirkland/FTP-Deploy-Action@2.0.0
+	  env:
+		# FTP server name (you may need to specify a port)
+		FTP_SERVER: www.florianhofer.it
+		# FTP account username
+		FTP_USERNAME: ${{ secrets.WWW_FTPU }}
+		# FTP account password
+		FTP_PASSWORD: ${{ secrets.WWW_FTPP }}
+		# The local folder to copy, defaults to root project folder
+		LOCAL_DIR: www/
+		# The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here)
+		REMOTE_DIR: www.florianhofer.it/
+		# upload protocol
+		METHOD: ftp
+		# server port
+		PORT: 21

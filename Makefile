@@ -14,7 +14,7 @@ sources = menu.c \
 TARGETS = $(sources:.c=)
 LIBS	= -lmycgi #-lsqlite3 #-ljson-c
 
-CFLAGS ?= -Wall -Wno-nonnull 
+CFLAGS ?= -Wall -Wno-nonnull -march=native
 CPPFLAGS += -D _GNU_SOURCE -I src/include
 #LDFLAGS ?= -pthread 
 LDFLAGS ?= -lmycgi -L $(OBJDIR) -pthread 
