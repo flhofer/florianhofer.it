@@ -30,6 +30,7 @@ static int menuMain() {
 			"<a href=\"#news\">News</a>\n"
 			"<a href=\"#contact\">Contact</a>\n"
 			"<a href=\"#locations\">Locations</a>\n"
+			"<a href=\"#patch\">Kernel patches</a>\n"
 			"<a href=\"#about\">About</a>\n"
 			"<a href=\"javascript:void(0);\" class=\"icon\" onclick=\"menuOpen()\">\n"
 			"<i class=\"fa fa-bars\"></i>\n"
