@@ -6,7 +6,7 @@ AR?=$(CROSS_COMPILE)ar
 DEBUG=1
 
 OBJDIR = build
-BINDIR = www/cgi-bin
+BINDIR = cgi-bin
 
 sources = menu.c \
 		  display.c
