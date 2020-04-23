@@ -35,7 +35,7 @@ void pop(void ** head) {
     *head = next_node;
 }
 
-#define FILEDB "../res/files.csv" // TODO: check, httpd specific
+#define FILEDB "../res/files.csv"
 
 typedef struct filedata {
 	struct filedata * next;
@@ -50,9 +50,15 @@ typedef struct filedata {
 
 static filed_t * fhead;
 
-static char fbuff [FBUFSZ];
-
-static void getfields(char* buff) {
+/*
+ * getfields() : parse buffer and get entry fields for paper specification
+ *
+ * Arguments : - pointer to buffer containing CSV
+ *
+ * Return : -
+ */
+static
+void getfields(char* buff) {
 	char* tok;
 	char* rest = buff;
 
@@ -101,55 +107,82 @@ static void getfields(char* buff) {
     }
 }
 
-static int readFile () {
+/*
+ * readFile() : Read CSV containing the papers into memory
+ *
+ * Arguments : -
+ *
+ * Return : 0 on success, Error code otherwise
+ */
+static
+int readFile () {
     FILE* stream;
+    char fbuff [FBUFSZ];
 
     if ((stream = fopen(FILEDB, "r"))) {
 		while (fgets(fbuff, FBUFSZ, stream))
 		{
-			char* tmp = strdup(fbuff); // duplicate for file change?
-			getfields(tmp);
 			// NOTE strtok clobbers tmp
+			char* tmp = strdup(fbuff);
+			getfields(tmp);
 			free(tmp);
 		}
 		fclose(stream);
-    }
-    else
-    	cgiOut("<h2>warn: file %s not found: %s </h2>\n", FILEDB, strerror(errno));
 
-    return 0;
+		return 0;
+    }
+
+    cgiOut("<h2>warn: file %s not found: %s </h2>\n", FILEDB, strerror(errno));
+
+    return ENFILE;
 }
 
-const char * fileListName (int id) {
+/*
+ * fileListName() : get the full file path of the entry no
+ *
+ * Arguments : - id or entry number
+ *
+ * Returns : Path on success, NULL on fail
+ */
+const char *
+fileListName (int id) {
 
-	(void)readFile();
-
-	for (filed_t * cur = fhead; ((cur)); cur=cur->next){
-
-		if (id == cur->id) {
-			char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
-			*fn = '\0';
-			// TODO: clean up the folder mess
-			(void)strcat(fn, "../");
-			(void)strcat(fn, cur->folder);
-			(void)strcat(fn, "/");
-			(void)strcat(cur->folder, "/");
-			(void)strcat(fn, cur->filen);
-			return fn;
+	if (!readFile())
+		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
+			if (id == cur->id) {
+				char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
+				*fn = '\0';
+				(void)strcat(fn, "../");
+				(void)strcat(fn, cur->folder);
+				(void)strcat(fn, "/");
+				(void)strcat(fn, cur->filen);
+				return fn;
+			}
 		}
-	}
 	return NULL;
 }
 
-void listFiles () {
+/*
+ * listFiles() : print a list of documents in CSV file
+ *
+ * Arguments : -
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int
+listFiles () {
 	// TODO: add session ID to force visiting site, or use hashes only
-	(void)readFile();
+	int ret = readFile();
 
 	cgiOut("<div style=\"padding-left:16px\"><table>\n");
-	for (filed_t * cur = fhead; ((cur)); cur=cur->next){
+
+	if (!ret)
+		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
 		cgiOut ("<tr><td>%s</td><td>%s</td></tr>\n", cur->author, cur->year);
 		cgiOut ("<tr><td colspan=2><a href=\"display.cgi?id=%d\"> %s</a></td></tr>\n", cur->id, cur->title);
 		cgiOut ("<tr><td colspan=2>&nbsp;</td></tr>\n");
-	}
+		}
 	cgiOut("</table></div>\n");
+
+	return ret;
 }

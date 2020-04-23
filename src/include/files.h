@@ -8,7 +8,7 @@
 #ifndef _FILES_H_
 	#define _FILES_H_
 
-	void listFiles ();
+	int listFiles ();
 	const char * fileListName (int id);
 
 	#define FBUFSZ 1024
