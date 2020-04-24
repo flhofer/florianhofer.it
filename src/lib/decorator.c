@@ -14,32 +14,45 @@
 static int menuMain();
 
 // Parameters for tags, to enable defaults and auto-close
-static struct {
+#define TAGPARSIZE 4
+static struct tagDefault{
 	enum tagType tag; 	// Enumeration constant
 	char tagAcr[6];		// Acronym in the <> context
-} tagDefault[] = {
-		{ tt_HTML,	"HTML"},
-		{ tt_HEAD,	"HEAD"},
-		{ tt_META,	"META"},
-		{ tt_LINK,	"LINK"},
-		{ tt_TITLE, "TITLE"},
-		{ tt_BODY,	"BODY"},
-		{ tt_H1,	"H1"},
-		{ tt_H2,	"H2"},
-		{ tt_B,		"B"},
-		{ tt_IT,	"IT"},
-		{ tt_DIV,	"DIV"},
-		{ tt_A,		"A"},
-		{ tt_TABLE,	"TABLE"},
-		{ tt_TR,	"TR"},
-		{ tt_TD,	"TD"},
-		{ 0, "" }
+	char * parList[TAGPARSIZE];	// pointer to parameter list
+	int  tagClose;		// self-contained tag?
+}
+const
+	tagDefault[] = {
+		{ tt_HTML,	"HTML", {NULL}, -1},
+		{ tt_HEAD,	"HEAD", {NULL}, -1},
+		{ tt_META,	"META", {"name", "content", NULL}, 1},
+		{ tt_LINK,	"LINK", {"rel", "href", NULL}, 1},
+		{ tt_TITLE, "TITLE", {NULL}, 0},
+		{ tt_BODY,	"BODY", {NULL}, -1},
+		{ tt_H1,	"H1", {NULL}, 0},
+		{ tt_H2,	"H2", {NULL}, 0},
+		{ tt_B,		"B", {NULL}, 0},
+		{ tt_I,		"I", {"class", NULL}, 0},
+		{ tt_DIV,	"DIV", {"class", "id", NULL}, -1},
+		{ tt_A,		"A", {"href", "class", "on-click", NULL}, 0},
+		{ tt_TABLE,	"TABLE", {NULL}, -1},
+		{ tt_TR,	"TR", {NULL}, -1},
+		{ tt_TD,	"TD", {NULL}, 0},
+		{ 0, "", {NULL}, 0}
 	};
 
 // stack of tag pointers, points to list of open tags
+// TODO -> global to local for eventual multi-threading/dynamic
 static enum tagType * tagstack;
 #define NUMTAGS 50 // max number of tags in buffer -1 (for zero)
 static int tagstackP = 0;
+static int tagInline = 0;
+
+static inline void
+cgiTagIndent(){
+	for (int i=tagstackP; i>0; i--)
+		cgiOut("  ");
+}
 
 /*
  *
@@ -61,8 +74,15 @@ cgiTagClose(enum tagType tag){
 
 		if (pos >= 0){
 
-			cgiOut("</%s>\n", tagDefault[pos].tagAcr);
 			tagstackP--;
+
+			// IF -1  indent, if 0 don't
+			if ((!tagInline))
+				cgiTagIndent();
+
+			tagInline= 0;
+
+			cgiOut("</%s>\n", tagDefault[pos].tagAcr);
 
 			if (tagstack[(tagstackP)] != tag)
 				continue;
@@ -76,10 +96,55 @@ cgiTagClose(enum tagType tag){
 	return 0;
 }
 
+
 /*
  *
  */
-int
+static int
+cgiTagParams2 (va_list parList, const struct tagDefault * tag){
+
+	if (tagInline)
+		cgiOut("\n");
+	tagInline = 0;
+
+	cgiTagIndent();
+
+	cgiOut("<%s", tag->tagAcr);
+
+	const char * t = NULL; // next parameter tag name
+	const char * p = NULL; // next parameter value
+
+	// init parameter var
+	char * const *parTags = tag->parList;
+
+	// repeat until NULL
+	while ((t = *parTags))
+	{
+		if ((p = va_arg(parList, char *)))
+			cgiOut(" %s=\"%s\"", t, p);
+		parTags++;
+	}
+
+	if (tag->tagClose > 0)
+		cgiOut("/>\n");
+	else{
+		if (tag->tagClose == -1)
+			cgiOut(">\n");
+		else{
+			cgiOut(">");
+			tagInline = 1;
+		}
+		tagstack[tagstackP] = tag->tag;
+		tagstackP++;
+	}
+
+	return 0;
+}
+
+/*
+ *
+ */
+static int
 cgiTagParams (va_list parList, ...){
 	va_list tagList;
 	va_start(tagList, parList);
@@ -115,67 +180,18 @@ cgiTag (enum tagType tag, ...){
 		}
 
 	if (pos >= 0) {
-		char * s = NULL;
 
 		switch (tag) {
 
 		case tt_TITLE: // Self-enclosed page title
 
-			s = va_arg(parList, char *);
+			cgiTagIndent();
+
+			char * s = va_arg(parList, char *);
 
 			cgiOut("<%s>%s</%s>\n", tagDefault[pos].tagAcr,
 					s,
 					tagDefault[pos].tagAcr);
-			break;
-
-		case tt_LINK: // Self-enclosed Header link
-
-			cgiOut("<%s", tagDefault[pos].tagAcr);
-
-			// check first parameter, relation type
-			if ((s = va_arg(parList, char *)))
-				cgiOut(" rel=\"%s\"", s);
-
-			// check second parameter, hyper reference
-			if ((s = va_arg(parList, char *)))
-				cgiOut(" href=\"%s\"", s);
-
-			cgiOut("/>\n");
-			break;
-
-		case tt_META: // Self-enclosed meta information
-
-			cgiOut("<%s", tagDefault[pos].tagAcr);
-
-			cgiTagParams(parList, "name", "content", NULL);
-/*
-			// check first parameter, meta name
-			if ((s = va_arg(ap, char *)))
-				cgiOut(" name=\"%s\"", s);
-
-			// check second parameter, meta value
-			if ((s = va_arg(ap, char *)))
-				cgiOut(" content=\"%s\"", s);
-*/
-			cgiOut("/>\n");
-			break;
-
-		case tt_DIV: // DIV
-
-			cgiOut("<%s", tagDefault[pos].tagAcr);
-
-			// check first parameter, meta name
-			if ((s = va_arg(parList, char *)))
-				cgiOut(" class=\"%s\"", s);
-
-			// check second parameter, meta value
-			if ((s = va_arg(parList, char *)))
-				cgiOut(" id=\"%s\"", s);
-
-			cgiOut(">\n");
-
-			tagstack[tagstackP] = tagDefault[pos].tag;
-			tagstackP++;
 			break;
 
 		case tt_BODY: // close first
@@ -183,10 +199,7 @@ cgiTag (enum tagType tag, ...){
 			// then fall through
 			// no break
 		default:
-			cgiOut("<%s>", tagDefault[pos].tagAcr);
-			tagstack[tagstackP] = tagDefault[pos].tag;
-			tagstackP++;
-
+			cgiTagParams2(parList, &tagDefault[pos]);
 		}
 	}
 	else
@@ -224,16 +237,17 @@ int cgiHeader() {
 
 static int menuMain() {
 	cgiTag(tt_DIV, "topnav", "myTopnav");
-	cgiOut ("<a href=\"#home\" class=\"active\">Home</a>\n"
-			"<a href=\"#news\">News</a>\n"
-			"<a href=\"#contact\">Contact</a>\n"
-			"<a href=\"#locations\">Locations</a>\n"
-			"<a href=\"#patch\">Kernel patches</a>\n"
-			"<a href=\"#about\">About</a>\n"
-			"<a href=\"javascript:void(0);\" class=\"icon\" onclick=\"menuOpen()\">\n"
-			"<i class=\"fa fa-bars\"></i>\n"
-			"</a>\n"
-			"</div>\n");
+
+	AFULL("Home", "#home", NULL)
+	AFULL("Contact", "#contact", NULL)
+	AFULL("Locations", "#locations", NULL)
+	AFULL("Kernel patches", "#patch", NULL)
+	AFULL("About", "#about", NULL)
+	cgiTag(tt_A, "javascript:void(0);", NULL);
+	cgiTag(tt_I, "fa fa-bars", NULL);
+	// autoclose I/ autoclose A
+	cgiTagClose(tt_DIV);
+
 	return 0; // TODO: fix return value
 }
 

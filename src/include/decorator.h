@@ -19,7 +19,7 @@
 		tt_H1 = 100,
 		tt_H2,
 		tt_B,
-		tt_IT,
+		tt_I,
 		tt_DIV,
 		tt_A,
 		tt_TABLE = 200,
@@ -35,10 +35,13 @@
 	#define cgiOut(...) (void)fprintf (cgi_out, __VA_ARGS__)
 
 	int	cgiTag (enum tagType tag, ...);
+	int	cgiTagClose (enum tagType tag);
 	#define HTML cgiTag(tt_HTML);
 	#define HEAD cgiTag(tt_HEAD);
 	#define BODY cgiTag(tt_BODY);
-
+	#define AFULL(cont, ...) cgiTag(tt_A, __VA_ARGS__); \
+						 	 cgiOut(cont); \
+							 cgiTagClose(tt_A);
 	// Constants
 	#define WEB_TITLE "Florian Hofer - www.florianhofer.it"
 #endif /* _DECORATOR_H_ */
