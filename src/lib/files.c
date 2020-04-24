@@ -174,15 +174,34 @@ listFiles () {
 	// TODO: add session ID to force visiting site, or use hashes only
 	int ret = readFile();
 
-	cgiOut("<div style=\"padding-left:16px\"><table>\n");
+	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_TABLE);
 
 	if (!ret)
 		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
-		cgiOut ("<tr><td>%s</td><td>%s</td></tr>\n", cur->author, cur->year);
-		cgiOut ("<tr><td colspan=2><a href=\"display.cgi?id=%d\"> %s</a></td></tr>\n", cur->id, cur->title);
-		cgiOut ("<tr><td colspan=2>&nbsp;</td></tr>\n");
+			// TODO: fix colspan... simplify (macro?)
+			cgiTag(tt_TR);
+			cgiTag(tt_TD);
+			cgiOut("%s", cur->author);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD);
+			cgiOut("%s", cur->year);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			char url[20];
+			(void)sprintf(url, "display.cgi?id=%d", cur->id);
+			cgiTag(tt_A, url);
+			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut ("&nbsp;");
+			cgiTagClose(tt_TR);
 		}
-	cgiOut("</table></div>\n");
+	cgiTagClose(tt_DIV);
 
 	return ret;
 }

@@ -47,6 +47,7 @@
 	#define TITLE(cont)  cgiTag(tt_TITLE); \
 					 	 cgiOut(cont); \
 						 cgiTagClose(tt_TITLE);
+
 	// Constants
 	#define WEB_TITLE "Florian Hofer - www.florianhofer.it"
 #endif /* _DECORATOR_H_ */

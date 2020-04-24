@@ -34,11 +34,11 @@ const
 		{ tt_H2,	"H2", {NULL}, 0},
 		{ tt_B,		"B", {NULL}, 0},
 		{ tt_I,		"I", {"class", NULL}, 0},
-		{ tt_DIV,	"DIV", {"class", "id", NULL}, -1},
+		{ tt_DIV,	"DIV", {"class", "id", "style", NULL}, -1},
 		{ tt_A,		"A", {"href", "class", "onclick", NULL}, 0},
 		{ tt_TABLE,	"TABLE", {NULL}, -1},
 		{ tt_TR,	"TR", {NULL}, -1},
-		{ tt_TD,	"TD", {NULL}, 0},
+		{ tt_TD,	"TD", {"colspan", NULL}, 0},
 		{ 0, "", {NULL}, 0}
 	};
 
@@ -172,6 +172,7 @@ cgiTag (enum tagType tag, ...){
 	va_start(parList, tag);
 
 	int pos = -1;
+	int ret = 0;
 
 	// loop through available tags
 	for (int i=0; tagDefault[i].tag>0; i++ )
@@ -183,13 +184,15 @@ cgiTag (enum tagType tag, ...){
 	if (pos >= 0) {
 			cgiTagParams2(parList, &tagDefault[pos]);
 	}
-	else
+	else {
 		// TODO: internal server error? DIE
 //		die("Internal server error");
 		cgiOut("INTERNAL SERVER ERROR");
+		ret = EINVAL;
+	}
 
 	va_end(parList);
-	return 0;
+	return ret;
 }
 
 static int
