@@ -29,12 +29,13 @@ const
 		{ tt_LINK,	"LINK", {"rel", "href", NULL}, 1},
 		{ tt_TITLE, "TITLE", {NULL}, 0},
 		{ tt_BODY,	"BODY", {NULL}, -1},
+		{ tt_SCRIPT,"SCRIPT", {"type", "src", NULL}, 0},
 		{ tt_H1,	"H1", {NULL}, 0},
 		{ tt_H2,	"H2", {NULL}, 0},
 		{ tt_B,		"B", {NULL}, 0},
 		{ tt_I,		"I", {"class", NULL}, 0},
 		{ tt_DIV,	"DIV", {"class", "id", NULL}, -1},
-		{ tt_A,		"A", {"href", "class", "on-click", NULL}, 0},
+		{ tt_A,		"A", {"href", "class", "onclick", NULL}, 0},
 		{ tt_TABLE,	"TABLE", {NULL}, -1},
 		{ tt_TR,	"TR", {NULL}, -1},
 		{ tt_TD,	"TD", {NULL}, 0},
@@ -180,27 +181,7 @@ cgiTag (enum tagType tag, ...){
 		}
 
 	if (pos >= 0) {
-
-		switch (tag) {
-
-		case tt_TITLE: // Self-enclosed page title
-
-			cgiTagIndent();
-
-			char * s = va_arg(parList, char *);
-
-			cgiOut("<%s>%s</%s>\n", tagDefault[pos].tagAcr,
-					s,
-					tagDefault[pos].tagAcr);
-			break;
-
-		case tt_BODY: // close first
-			cgiTagClose(tt_HEAD);
-			// then fall through
-			// no break
-		default:
 			cgiTagParams2(parList, &tagDefault[pos]);
-		}
 	}
 	else
 		// TODO: internal server error? DIE
@@ -228,7 +209,7 @@ int cgiHeader() {
 	cgiTag(tt_META, "viewport", "width=device-width, initial-scale=1");
 	cgiTag(tt_LINK,	"stylesheet", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 	cgiTag(tt_LINK,	"stylesheet","../css/menu.css");
-	cgiTag(tt_TITLE, WEB_TITLE);
+	TITLE(WEB_TITLE);
 	BODY
 
 	(void)menuMain();
@@ -238,12 +219,13 @@ int cgiHeader() {
 static int menuMain() {
 	cgiTag(tt_DIV, "topnav", "myTopnav");
 
-	AFULL("Home", "#home", NULL)
+	AFULL("Home", "#home", "active", NULL)
+	AFULL("News", "#news", NULL)
 	AFULL("Contact", "#contact", NULL)
 	AFULL("Locations", "#locations", NULL)
 	AFULL("Kernel patches", "#patch", NULL)
 	AFULL("About", "#about", NULL)
-	cgiTag(tt_A, "javascript:void(0);", NULL);
+	cgiTag(tt_A, "javascript:void(0);", "icon", "menuOpen()");
 	cgiTag(tt_I, "fa fa-bars", NULL);
 	// autoclose I/ autoclose A
 	cgiTagClose(tt_DIV);
@@ -252,11 +234,12 @@ static int menuMain() {
 }
 
 int cgiFooter() {
-	cgiOut ("<div class=\"bnavbar\" id=\"bnav\">\n"
-			"&#9400; 2019 Florian Hofer. Proudly implemented using C. V%s\n"
-			"</div>\n", VERSION);
-	cgiOut ("<script type=\"text/javascript\" src=\"../js/menu.js\"></script>\n");
-
+	cgiTag(tt_DIV, "bnavbar", "bnav");
+	cgiTagIndent();
+	cgiOut ("&#9400; 2019 Florian Hofer. Proudly implemented using C. V%s\n", VERSION);
+	cgiTagClose(tt_DIV);
+	cgiTag(tt_SCRIPT, "text/javascript", "../js/menu.js" );
+	// auto-close
 	(void)unrollStack();
 
 	free(tagstack); // free stack

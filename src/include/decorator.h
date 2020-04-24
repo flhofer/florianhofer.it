@@ -16,6 +16,7 @@
 		tt_LINK,
 		tt_TITLE,
 		tt_BODY,
+		tt_SCRIPT,
 		tt_H1 = 100,
 		tt_H2,
 		tt_B,
@@ -38,10 +39,14 @@
 	int	cgiTagClose (enum tagType tag);
 	#define HTML cgiTag(tt_HTML);
 	#define HEAD cgiTag(tt_HEAD);
-	#define BODY cgiTag(tt_BODY);
+	#define BODY cgiTagClose(tt_HEAD); \
+					cgiTag(tt_BODY);
 	#define AFULL(cont, ...) cgiTag(tt_A, __VA_ARGS__); \
 						 	 cgiOut(cont); \
 							 cgiTagClose(tt_A);
+	#define TITLE(cont)  cgiTag(tt_TITLE); \
+					 	 cgiOut(cont); \
+						 cgiTagClose(tt_TITLE);
 	// Constants
 	#define WEB_TITLE "Florian Hofer - www.florianhofer.it"
 #endif /* _DECORATOR_H_ */
