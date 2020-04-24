@@ -80,9 +80,30 @@ cgiTagClose(enum tagType tag){
  *
  */
 int
+cgiTagParams (va_list parList, ...){
+	va_list tagList;
+	va_start(tagList, parList);
+
+	char * t = NULL; // next parameter tag name
+	char * p = NULL; // next parameter value
+
+	// repeat until NULL
+	while ((t = va_arg(tagList, char *)))
+	{
+		if ((p = va_arg(parList, char *)))
+			cgiOut(" %s=\"%s\"", t, p);
+	}
+	va_end(tagList);
+	return 0;
+}
+
+/*
+ *
+ */
+int
 cgiTag (enum tagType tag, ...){
-	va_list ap;
-	va_start(ap, tag);
+	va_list parList;
+	va_start(parList, tag);
 
 	int pos = -1;
 
@@ -100,7 +121,7 @@ cgiTag (enum tagType tag, ...){
 
 		case tt_TITLE: // Self-enclosed page title
 
-			s = va_arg(ap, char *);
+			s = va_arg(parList, char *);
 
 			cgiOut("<%s>%s</%s>\n", tagDefault[pos].tagAcr,
 					s,
@@ -112,11 +133,11 @@ cgiTag (enum tagType tag, ...){
 			cgiOut("<%s", tagDefault[pos].tagAcr);
 
 			// check first parameter, relation type
-			if ((s = va_arg(ap, char *)))
+			if ((s = va_arg(parList, char *)))
 				cgiOut(" rel=\"%s\"", s);
 
 			// check second parameter, hyper reference
-			if ((s = va_arg(ap, char *)))
+			if ((s = va_arg(parList, char *)))
 				cgiOut(" href=\"%s\"", s);
 
 			cgiOut("/>\n");
@@ -126,6 +147,8 @@ cgiTag (enum tagType tag, ...){
 
 			cgiOut("<%s", tagDefault[pos].tagAcr);
 
+			cgiTagParams(parList, "name", "content", NULL);
+/*
 			// check first parameter, meta name
 			if ((s = va_arg(ap, char *)))
 				cgiOut(" name=\"%s\"", s);
@@ -133,8 +156,26 @@ cgiTag (enum tagType tag, ...){
 			// check second parameter, meta value
 			if ((s = va_arg(ap, char *)))
 				cgiOut(" content=\"%s\"", s);
-
+*/
 			cgiOut("/>\n");
+			break;
+
+		case tt_DIV: // DIV
+
+			cgiOut("<%s", tagDefault[pos].tagAcr);
+
+			// check first parameter, meta name
+			if ((s = va_arg(parList, char *)))
+				cgiOut(" class=\"%s\"", s);
+
+			// check second parameter, meta value
+			if ((s = va_arg(parList, char *)))
+				cgiOut(" id=\"%s\"", s);
+
+			cgiOut(">\n");
+
+			tagstack[tagstackP] = tagDefault[pos].tag;
+			tagstackP++;
 			break;
 
 		case tt_BODY: // close first
@@ -153,7 +194,7 @@ cgiTag (enum tagType tag, ...){
 //		die("Internal server error");
 		cgiOut("INTERNAL SERVER ERROR");
 
-	va_end(ap);
+	va_end(parList);
 	return 0;
 }
 
@@ -182,8 +223,8 @@ int cgiHeader() {
 }
 
 static int menuMain() {
-	cgiOut ("<div class=\"topnav\" id=\"myTopnav\">\n"
-			"<a href=\"#home\" class=\"active\">Home</a>\n"
+	cgiTag(tt_DIV, "topnav", "myTopnav");
+	cgiOut ("<a href=\"#home\" class=\"active\">Home</a>\n"
 			"<a href=\"#news\">News</a>\n"
 			"<a href=\"#contact\">Contact</a>\n"
 			"<a href=\"#locations\">Locations</a>\n"
@@ -200,9 +241,7 @@ int cgiFooter() {
 	cgiOut ("<div class=\"bnavbar\" id=\"bnav\">\n"
 			"&#9400; 2019 Florian Hofer. Proudly implemented using C. V%s\n"
 			"</div>\n", VERSION);
-	cgiOut ("<script type=\"text/javascript\" src=\"../js/menu.js\"></script>\n"
-			"</body>\n"
-			"</html>");
+	cgiOut ("<script type=\"text/javascript\" src=\"../js/menu.js\"></script>\n");
 
 	(void)unrollStack();
 
