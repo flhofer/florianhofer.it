@@ -21,6 +21,7 @@
 		tt_H2,
 		tt_B,
 		tt_I,
+		tt_P,
 		tt_DIV,
 		tt_A,
 		tt_HR,
@@ -51,6 +52,7 @@
 	#define TITLE(cont)  cgiTag(tt_TITLE); \
 					 	 cgiOut(cont); \
 						 cgiTagClose(tt_TITLE);
+	#define BR			 cgiOut("<BR>\n");
 
 	int cgiSection(char * title, char * id);
 

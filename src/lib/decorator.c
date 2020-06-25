@@ -32,6 +32,7 @@ const
 		{ tt_H2,	"H2", {"style", NULL}, 0},
 		{ tt_B,		"B", {NULL}, 0},
 		{ tt_I,		"I", {"class", NULL}, 0},
+		{ tt_P,		"P", {NULL}, -1},
 		{ tt_DIV,	"DIV", {"class", "id", "style", NULL}, -1},
 		{ tt_A,		"A", {"href", "class", "onclick", NULL}, 0},
 		{ tt_SPAN,	"SPAN", {"style", NULL}, 0},
