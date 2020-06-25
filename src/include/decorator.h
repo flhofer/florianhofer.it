@@ -23,6 +23,9 @@
 		tt_I,
 		tt_DIV,
 		tt_A,
+		tt_HR,
+		tt_SPAN,
+		tt_IMG,
 		tt_TABLE = 200,
 		tt_TR,
 		tt_TD
@@ -37,6 +40,7 @@
 
 	int	cgiTag (enum tagType tag, ...);
 	int	cgiTagClose (enum tagType tag);
+
 	#define HTML cgiTag(tt_HTML);
 	#define HEAD cgiTag(tt_HEAD);
 	#define BODY cgiTagClose(tt_HEAD); \
@@ -47,6 +51,8 @@
 	#define TITLE(cont)  cgiTag(tt_TITLE); \
 					 	 cgiOut(cont); \
 						 cgiTagClose(tt_TITLE);
+
+	int cgiSection(char * title, char * id);
 
 	// Constants
 	#define WEB_TITLE "Florian Hofer - www.florianhofer.it"

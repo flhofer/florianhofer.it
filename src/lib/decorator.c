@@ -11,8 +11,6 @@
 #include <stdarg.h>
 #include <errno.h>
 
-static int menuMain();
-
 // Parameters for tags, to enable defaults and auto-close
 #define TAGPARSIZE 4
 static struct tagDefault{
@@ -30,15 +28,18 @@ const
 		{ tt_TITLE, "TITLE", {NULL}, 0},
 		{ tt_BODY,	"BODY", {NULL}, -1},
 		{ tt_SCRIPT,"SCRIPT", {"type", "src", NULL}, 0},
-		{ tt_H1,	"H1", {NULL}, 0},
-		{ tt_H2,	"H2", {NULL}, 0},
+		{ tt_H1,	"H1", {"style", NULL}, 0},
+		{ tt_H2,	"H2", {"style", NULL}, 0},
 		{ tt_B,		"B", {NULL}, 0},
 		{ tt_I,		"I", {"class", NULL}, 0},
 		{ tt_DIV,	"DIV", {"class", "id", "style", NULL}, -1},
 		{ tt_A,		"A", {"href", "class", "onclick", NULL}, 0},
+		{ tt_SPAN,	"SPAN", {"style", NULL}, 0},
+		{ tt_IMG,	"IMG", {"src", "width", "height", NULL}, 1},
 		{ tt_TABLE,	"TABLE", {NULL}, -1},
 		{ tt_TR,	"TR", {NULL}, -1},
 		{ tt_TD,	"TD", {"colspan", NULL}, 0},
+		{ tt_HR,	"HR", {"style", "id", NULL}, 0},
 		{ 0, "", {NULL}, 0}
 	};
 
@@ -54,49 +55,6 @@ cgiTagIndent(){
 	for (int i=tagstackP; i>0; i--)
 		cgiOut("  ");
 }
-
-/*
- *
- */
-int
-cgiTagClose(enum tagType tag){
-
-	int pos = 0;
-
-	while (tagstackP > 0)
-	{
-		pos = -1;
-		// loop through available tags
-		for (int i=0; tagDefault[i].tag>0; i++ )
-			if ( tagstack[(tagstackP-1)] == tagDefault[i].tag ) {
-				pos = i;
-				break;
-			}
-
-		if (pos >= 0){
-
-			tagstackP--;
-
-			// IF -1  indent, if 0 don't
-			if ((!tagInline))
-				cgiTagIndent();
-
-			tagInline= 0;
-
-			cgiOut("</%s>\n", tagDefault[pos].tagAcr);
-
-			if (tagstack[(tagstackP)] != tag)
-				continue;
-			break;
-		}
-		// TODO: internal server error? DIE
-//		die("Internal server error");
-		cgiOut("INTERNAL SERVER ERROR\n");
-		return EINVAL;
-	}
-	return 0;
-}
-
 
 /*
  *
@@ -123,6 +81,8 @@ cgiTagParams2 (va_list parList, const struct tagDefault * tag){
 	{
 		if ((p = va_arg(parList, char *)))
 			cgiOut(" %s=\"%s\"", t, p);
+		else
+			break;
 		parTags++;
 	}
 
@@ -164,7 +124,89 @@ cgiTagParams (va_list parList, ...){
 }
 
 /*
+ *	unrollStack: close all tags in stack
  *
+ *	Arguments:	-
+ *
+ *	Return Value: 0 on success, error code otherwise
+ */
+static int
+unrollStack(){
+	return cgiTagClose(0);
+}
+
+static int
+menuMain() {
+	cgiTag(tt_DIV, "topnav", "myTopnav");
+
+	AFULL("Home", "#home", "active", NULL)
+	AFULL("News", "#news", NULL)
+	AFULL("Publications", "#pubs", NULL)
+	AFULL("Locations", "#locations", NULL)
+	AFULL("Kernel patches", "#patch", NULL)
+	cgiTag(tt_A, "javascript:void(0);", "icon", "menuOpen()");
+	cgiTag(tt_I, "fa fa-bars", NULL);
+	// autoclose I/ autoclose A
+	cgiTagClose(tt_DIV);
+
+	return 0; // TODO: fix return value
+}
+
+/* --------------	Public functions ----------------- */
+
+/*
+ *	cgiTagClose: unroll stack of tags and close all until <tag>
+ *
+ *	Arguments:	- tag to stop unroll tag stack
+ *
+ *	Return Value: 0 on success, error code otherwise
+ */
+int
+cgiTagClose(enum tagType tag){
+
+	int pos = 0;
+
+	while (tagstackP > 0)
+	{
+		pos = -1;
+		// loop through available tags
+		for (int i=0; tagDefault[i].tag>0; i++ )
+			if ( tagstack[(tagstackP-1)] == tagDefault[i].tag ) {
+				pos = i;
+				break;
+			}
+
+		if (pos >= 0){
+
+			tagstackP--;
+
+			// IF -1  indent, if 0 don't
+			if ((!tagInline))
+				cgiTagIndent();
+
+			tagInline= 0;
+
+			cgiOut("</%s>\n", tagDefault[pos].tagAcr);
+
+			if (tagstack[(tagstackP)] != tag)
+				continue;
+			break;
+		}
+		// TODO: internal server error? DIE
+//		die("Internal server error");
+		cgiOut("INTERNAL SERVER ERROR\n");
+		return EINVAL;
+	}
+	return 0;
+}
+
+/*
+ *	cgiTag: open a new tag with parameters, push to stack
+ *
+ *	Arguments:	- tag to add to stack
+ *				- .. parameters that come with tag as in tagDefault[]
+ *
+ *	Return Value: 0 on success, error code otherwise
  */
 int
 cgiTag (enum tagType tag, ...){
@@ -195,11 +237,14 @@ cgiTag (enum tagType tag, ...){
 	return ret;
 }
 
-static int
-unrollStack(){
-	return cgiTagClose(0);
+int cgiSection(char * title, char * id) {
+	cgiTag(tt_HR, "margin-bottom: 70px;", id);
+	cgiTagClose(tt_HR);
+	cgiTag(tt_H2, "text-align: center;");
+	cgiOut("%s", title);
+	cgiTagClose(tt_H2);
+	return 0;// TODO: fix return value
 }
-
 
 int cgiHeader() {
 	tagstack = malloc (sizeof(enum tagType) * NUMTAGS);
@@ -216,23 +261,6 @@ int cgiHeader() {
 	BODY
 
 	(void)menuMain();
-	return 0; // TODO: fix return value
-}
-
-static int menuMain() {
-	cgiTag(tt_DIV, "topnav", "myTopnav");
-
-	AFULL("Home", "#home", "active", NULL)
-	AFULL("News", "#news", NULL)
-	AFULL("Contact", "#contact", NULL)
-	AFULL("Locations", "#locations", NULL)
-	AFULL("Kernel patches", "#patch", NULL)
-	AFULL("About", "#about", NULL)
-	cgiTag(tt_A, "javascript:void(0);", "icon", "menuOpen()");
-	cgiTag(tt_I, "fa fa-bars", NULL);
-	// autoclose I/ autoclose A
-	cgiTagClose(tt_DIV);
-
 	return 0; // TODO: fix return value
 }
 
