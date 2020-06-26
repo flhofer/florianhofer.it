@@ -155,6 +155,18 @@ menuMain() {
 
 /* --------------	Public functions ----------------- */
 
+
+void
+cgiOutI(char * fmt,...){
+
+	cgiTagIndent();
+	va_list args;
+    va_start(args, fmt);
+    cgiOut(fmt, args);
+    va_end(args);
+}
+
+
 /*
  *	cgiTagClose: unroll stack of tags and close all until <tag>
  *

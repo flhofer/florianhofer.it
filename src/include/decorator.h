@@ -39,6 +39,7 @@
 	extern FILE * cgi_out; // debug output file, defined in main
 	#define cgiOut(...) (void)fprintf (cgi_out, __VA_ARGS__)
 
+	void cgiOutI(char * fmt,...);
 	int	cgiTag (enum tagType tag, ...);
 	int	cgiTagClose (enum tagType tag);
 
@@ -52,7 +53,7 @@
 	#define TITLE(cont)  cgiTag(tt_TITLE); \
 					 	 cgiOut(cont); \
 						 cgiTagClose(tt_TITLE);
-	#define BR			 cgiOut("<BR>\n");
+	#define BR			 cgiOut("<BR/>\n");
 
 	int cgiSection(char * title, char * id);
 
