@@ -11,6 +11,8 @@
 	int listFiles ();
 	const char * fileListName (int id);
 
+	int includeFile(char* fname);
+
 	#define FBUFSZ 1024
 
 #endif /* _FILES_H_ */

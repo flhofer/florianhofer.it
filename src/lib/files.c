@@ -151,6 +151,7 @@ fileListName (int id) {
 		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
 			if (id == cur->id) {
 				char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
+				// TOOD: fix and clean
 				*fn = '\0';
 				(void)strcat(fn, "../");
 				(void)strcat(fn, cur->folder);
@@ -205,3 +206,44 @@ listFiles () {
 
 	return ret;
 }
+
+/*
+ * includeFile() : reads and prints a file to out
+ *
+ * Arguments : - filename to include in output
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int 
+includeFile(char* fname){
+
+	if (!fname)
+		return -1;
+
+	// build filename
+	// TODO: add function, external append directory prefix + sanitize
+	char * fn = malloc (strlen(fname) + 4); // + ../\0
+	(void)strcpy(fn , "../");
+	(void)strcat(fn, fname);
+
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    fp = fopen(fn, "r");
+    if (fp == NULL){
+     	free(fn);
+        return -2; // does not exist
+	}
+	
+    while ((read = getline(&line, &len, fp)) != -1) 
+		cgiOut("%s", line);
+		
+    fclose(fp);
+
+    free(line);
+	free (fn);
+	return 0;    
+}
+

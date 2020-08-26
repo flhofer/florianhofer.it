@@ -259,7 +259,7 @@ int cgiSection(char * title, char * id) {
 	return 0;// TODO: fix return value
 }
 
-int cgiHeader() {
+int cgiHeader(void * callb() ) {
 	tagstack = malloc (sizeof(enum tagType) * NUMTAGS);
 	*tagstack = 0;
 
@@ -267,6 +267,8 @@ int cgiHeader() {
 			 "<!DOCTYPE html>\n");
 
 	HTML HEAD
+	if (callb)
+		callb();
 	cgiTag(tt_META, "viewport", "width=device-width, initial-scale=1");
 	cgiTag(tt_LINK,	"stylesheet", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 	cgiTag(tt_LINK,	"stylesheet","../css/menu.css");

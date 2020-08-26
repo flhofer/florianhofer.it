@@ -47,7 +47,7 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(BINDIR):
-	mkdir -p $(BINDIR)
+	mkdir -p www/$(BINDIR)
 
 # Include dependency files, automatically generate them if needed.
 -include $(addprefix $(OBJDIR)/,$(sources:.c=.d))

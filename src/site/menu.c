@@ -3,11 +3,16 @@
 #include "decorator.h"
 #include "files.h"
 
+void headCallBack () {
+	// TODO: return value
+	(void)includeFile("analyticstracking.inc");
+}
+
 int main () {
 	// assign file to standard out TODO: change to parameter
 	cgi_out = stdout;
 
-	cgiHeader();
+	cgiHeader(&headCallBack);
 //    cgiOutI ("<div style=\"padding-left:16px\">\n"
 //    		"<h2>This page is temporarly offline.</h2>\n"
 //    		"<p>Check back in a month or follow development <a href=\"https://github.com/flhofer/florianhofer.it\">here</a></p>\n"
@@ -44,7 +49,7 @@ int main () {
     cgiTag(tt_SPAN, "font-size: medium;"); cgiTag(tt_B, NULL); cgiOut("About");
     cgiTagClose(tt_P);
     cgiTag(tt_P, NULL);
-    cgiOut("Florian Hofer is a Visiting Researcher at the University of Californuia, Berkeley, where he collaborates with Siemens USA on a Real-Time Control Container project.");
+    cgiOut("Florian Hofer is a Visiting Researcher at the University of California, Berkeley, where he collaborates with Siemens USA on a Real-Time Control Container project.");
     cgiTagClose(tt_P);
     cgiTagClose(tt_DIV);
 
