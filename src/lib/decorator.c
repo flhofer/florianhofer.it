@@ -259,7 +259,7 @@ int cgiSection(char * title, char * id) {
 	return 0;// TODO: fix return value
 }
 
-int cgiHeader(void * callb() ) {
+int cgiHeader(void * callb()) {
 	tagstack = malloc (sizeof(enum tagType) * NUMTAGS);
 	*tagstack = 0;
 
@@ -267,8 +267,10 @@ int cgiHeader(void * callb() ) {
 			 "<!DOCTYPE html>\n");
 
 	HTML HEAD
+	// callback function in HEAD
 	if (callb)
 		callb();
+
 	cgiTag(tt_META, "viewport", "width=device-width, initial-scale=1");
 	cgiTag(tt_LINK,	"stylesheet", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 	cgiTag(tt_LINK,	"stylesheet","../css/menu.css");
@@ -279,11 +281,16 @@ int cgiHeader(void * callb() ) {
 	return 0; // TODO: fix return value
 }
 
-int cgiFooter() {
+int cgiFooter(void * callb()) {
 	cgiTag(tt_DIV, "bnavbar", "bnav");
 	cgiTagIndent();
 	cgiOut ("&#9400; 2019 Florian Hofer. Proudly implemented using C. V%s\n", VERSION);
 	cgiTagClose(tt_DIV);
+
+	// callback function in FOOTER
+	if (callb)
+		callb();
+		
 	cgiTag(tt_SCRIPT, "text/javascript", "../js/menu.js" );
 	// auto-close
 	(void)unrollStack();

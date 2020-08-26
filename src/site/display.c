@@ -23,23 +23,23 @@ int main () {
 	int id;
 	if(data == NULL){
 		// TODO: add error message out macro/function to decorator, EG 404
-		cgiHeader();
+		cgiHeader(NULL);
 		cgiOut("<P>Error! Error in passing data from form to script.");
-	    cgiFooter();
+	    cgiFooter(NULL);
 	}
 	else if(sscanf(data,"id=%d",&id)!=1){
-		cgiHeader();
+		cgiHeader(NULL);
 		cgiOut("<P>Error! Invalid data. Data must be numeric.");
-		cgiFooter();
+		cgiFooter(NULL);
 	}
 	else {
 		const char * path = fileListName(id);
 
 		// TODO: fix return value evaluations and exceptions
 		if (NULL == path){
-			cgiHeader();
+			cgiHeader(NULL);
 			cgiOut("<P>Error! Path data. %d</p>", id);
-		    cgiFooter();
+		    cgiFooter(NULL);
 		    return 0;
 		}
 

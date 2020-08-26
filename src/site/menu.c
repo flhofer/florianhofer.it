@@ -70,7 +70,7 @@ int main () {
 
     cgiTagClose(tt_DIV);
 
-    cgiFooter();
+    cgiFooter(NULL);
 
     return EXIT_SUCCESS;
 }

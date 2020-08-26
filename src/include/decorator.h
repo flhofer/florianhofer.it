@@ -32,8 +32,8 @@
 		tt_TD
 	};
 
-	int cgiHeader();
-	int cgiFooter();
+	int cgiHeader(void * callb() );
+	int cgiFooter(void * callb() );
 
 	// Macro replacements
 	extern FILE * cgi_out; // debug output file, defined in main
