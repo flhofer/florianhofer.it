@@ -32,12 +32,12 @@
 		tt_TD
 	};
 
-	int cgiHeader(void * callb() );
-	int cgiFooter(void * callb() );
+	int cgiHeader(void (*callb)());
+	int cgiFooter(void (*callb)());
 
 	// Macro replacements
 	extern FILE * cgi_out; // debug output file, defined in main
-	#define cgiOut(...) (void)fprintf (cgi_out, __VA_ARGS__)
+	#define cgiOut(format, ...) (void)fprintf (cgi_out, format, ##__VA_ARGS__)
 
 	void cgiOutI(char * fmt,...);
 	int	cgiTag (enum tagType tag, ...);

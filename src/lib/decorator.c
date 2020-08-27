@@ -259,7 +259,7 @@ int cgiSection(char * title, char * id) {
 	return 0;// TODO: fix return value
 }
 
-int cgiHeader(void * callb()) {
+int cgiHeader(void (*callb)()) {
 	tagstack = malloc (sizeof(enum tagType) * NUMTAGS);
 	*tagstack = 0;
 
@@ -281,7 +281,7 @@ int cgiHeader(void * callb()) {
 	return 0; // TODO: fix return value
 }
 
-int cgiFooter(void * callb()) {
+int cgiFooter(void (*callb)()) {
 	cgiTag(tt_DIV, "bnavbar", "bnav");
 	cgiTagIndent();
 	cgiOut ("&#9400; 2019 Florian Hofer. Proudly implemented using C. V%s\n", VERSION);
