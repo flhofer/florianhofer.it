@@ -43,8 +43,15 @@ int main () {
 		    return 0;
 		}
 
+
 		struct stat st;
-		stat(path, &st);
+				
+		if (access(path, F_OK) || !stat(path, &st) || 0 == st.st_size){
+			cgiHeader(NULL);
+			cgiOut("<P>Error! File not found.</p>", NULL); // FIXME: internal server error if I remove the NULL - Docker container only
+			cgiFooter(NULL);
+			return 0;
+		}
 
 		cgiOut("Content-type: application/pdf\r\n");
 		cgiOut("Content-Disposition: inline; filename=\"document.pdf\"\r\n");
