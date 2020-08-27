@@ -182,10 +182,10 @@ listFiles () {
 		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
 			// TODO: fix colspan... simplify (macro?)
 			cgiTag(tt_TR);
-			cgiTag(tt_TD);
+			cgiTag(tt_TD, NULL);
 			cgiOut("%s", cur->author);
 			cgiTagClose(tt_TD);
-			cgiTag(tt_TD);
+			cgiTag(tt_TD, NULL);
 			cgiOut("%s", cur->year);
 			cgiTagClose(tt_TR);
 
