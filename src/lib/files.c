@@ -58,7 +58,7 @@ static filed_t * fhead;
  * Return : -
  */
 static
-void getfields(char* buff) {
+void getfields(char* buff, void **head, size_t elements) {
 	char* tok;
 	char* rest = buff;
 
@@ -66,35 +66,38 @@ void getfields(char* buff) {
 	if ('#' == *buff) // skip if commented out
     	return;
 
-    while ((tok = strtok_r(buff, "\n", &rest))) {
-    	buff = NULL; // reset after first
-    	char * line = strdup(tok); // new line to scan
+	if ((tok = strtok_r(buff, "\n", &rest)))
+		do {
+			char * line = strdup(tok); // new line to scan
 
-    	// add element to linked list
-        push((void**)&fhead, sizeof(filed_t));
+			// add element to linked list
+			push(head, elements);
 
-		char ** elmPos = ((char**)fhead)+2; // Minimum allocation size is 8 bytes
-
-    	// start with ID -> int
-    	if ((tok = strtok(line, ";"))){
-			fhead->id = atol(tok);
-    	}
-
-		int cnt = 0;
-
-		// continue until end
-		while ((tok = strtok(NULL, ";\n"))){
-			// skip if out of scope
-			if (6 > cnt){ // TODO: change to structure size
-				*elmPos = strdup(tok);
-			}
+			char ** elmPos = ((char**)*head);
 			elmPos++;
-			cnt++;
+
+			// start with ID -> int
+			if ((tok = strtok(line, ";"))){
+				*elmPos = (void*) atol(tok);
+				elmPos++;
+			}
+
+			int cnt = 0;
+
+			// continue until end
+			while ((tok = strtok(NULL, ";\n"))){
+				// skip if out of scope
+				if (((void*)*head)+elements > (void*)elmPos){ // TODO: change to structure size
+					*elmPos = strdup(tok);
+				}
+				elmPos++;
+				cnt++;
+			}
+			// delete element if incomplete or too big
+			if (((void*)*head)+elements != (void*)elmPos)
+				pop(head);
 		}
-		// delete element if incomplete or too big
-		if (6 < cnt || 6 > cnt)
-			pop((void**)&fhead);
-    }
+		while ((tok = strtok_r(NULL, "\n", &rest)));
 }
 
 /*
@@ -105,16 +108,16 @@ void getfields(char* buff) {
  * Return : 0 on success, Error code otherwise
  */
 static
-int readFile () {
+int readFile (const char * filename, void **head, size_t elements) {
     FILE* stream;
     char fbuff [FBUFSZ];
 
-    if ((stream = fopen(FILEDB, "r"))) {
+    if ((stream = fopen(filename, "r"))) {
 		while (fgets(fbuff, FBUFSZ, stream))
 		{
 			// NOTE strtok clobbers tmp
 			char* tmp = strdup(fbuff);
-			getfields(tmp);
+			getfields(tmp, head, elements);
 			free(tmp);
 		}
 		fclose(stream);
@@ -137,7 +140,7 @@ int readFile () {
 const char *
 fileListName (long id) {
 
-	if (!readFile())
+	if (!readFile(FILEDB, (void**)&fhead, sizeof(filed_t)))
 		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
 			if (id == cur->id) {
 				char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
@@ -163,7 +166,7 @@ fileListName (long id) {
 int
 listFiles () {
 	// TODO: add session ID to force visiting site, or use hashes only
-	int ret = readFile();
+	int ret = readFile(FILEDB, (void**)&fhead, sizeof(filed_t));
 
 	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
 	cgiTag(tt_TABLE);
