@@ -103,7 +103,7 @@ void getfields(char* buff) {
 		}
 		// delete element if incomplete or too big
 		if (6 < cnt || 6 > cnt)
-			pop((void**)fhead);
+			pop((void**)&fhead);
     }
 }
 
