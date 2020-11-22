@@ -39,7 +39,7 @@ void pop(void ** head) {
 
 typedef struct filedata {
 	struct filedata * next;
-	int id;		// TODO: change id to 128 bit hash or use session ID
+	long id;		// TODO: change id to 128 bit hash or use session ID
 	char* title;
 	char* author;
 	char* year;
@@ -77,7 +77,7 @@ void getfields(char* buff) {
 
     	// start with ID -> int
     	if ((tok = strtok(line, ";"))){
-			fhead->id = atoi(tok);
+			fhead->id = atol(tok);
     	}
 
 		int cnt = 0;
@@ -135,7 +135,7 @@ int readFile () {
  * Returns : Path on success, NULL on fail
  */
 const char *
-fileListName (int id) {
+fileListName (long id) {
 
 	if (!readFile())
 		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
@@ -182,7 +182,7 @@ listFiles () {
 			cgiTag(tt_TR);
 			cgiTag(tt_TD, "2");
 			char url[20];
-			(void)sprintf(url, "display.cgi?id=%d", cur->id);
+			(void)sprintf(url, "display.cgi?id=%ld", cur->id);
 			cgiTag(tt_A, url);
 			cgiOut("%s", cur->title);
 			cgiTagClose(tt_TR);

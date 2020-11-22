@@ -9,7 +9,7 @@
 	#define _FILES_H_
 
 	int listFiles ();
-	const char * fileListName (int id);
+	const char * fileListName (long id);
 
 	int includeFile(char* fname);
 
