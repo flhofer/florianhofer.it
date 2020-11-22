@@ -60,6 +60,8 @@ int main () {
 
     cgiSection("Projects", "projects");
 
+    listProjects();
+
     cgiSection("Locations", "locations");
 
     cgiTagClose(tt_DIV);

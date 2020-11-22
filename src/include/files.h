@@ -10,6 +10,7 @@
 
 	int listFiles ();
 	const char * fileListName (long id);
+	int listProjects ();
 
 	int includeFile(char* fname);
 

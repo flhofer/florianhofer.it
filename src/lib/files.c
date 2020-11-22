@@ -50,10 +50,27 @@ typedef struct filedata {
 
 static filed_t * fhead;
 
+#define PRJDB "../res/prj.csv"
+
+typedef struct prjdata {
+	struct prjdata * next;
+	long id;
+	char* title;
+	char* years;
+	char* partner;
+	char* link;
+	char* linkd;
+	char* descr;
+} prjd_t;
+
+static prjd_t * phead;
+
 /*
  * getfields() : parse buffer and get entry fields for paper specification
  *
- * Arguments : - pointer to buffer containing CSV
+ * Arguments : - pointer to buffer containing a CSV line
+ * 			   - pointer ** head of linked list
+ * 			   - element size
  *
  * Return : -
  */
@@ -62,8 +79,7 @@ void getfields(char* buff, void **head, size_t elements) {
 	char* tok;
 	char* rest = buff;
 
-	// TODO: missing null check
-	if ('#' == *buff) // skip if commented out
+	if ((!buff) || '#' == *buff) // skip if commented out
     	return;
 
 	if ((tok = strtok_r(buff, "\n", &rest)))
@@ -87,9 +103,9 @@ void getfields(char* buff, void **head, size_t elements) {
 			// continue until end
 			while ((tok = strtok(NULL, ";\n"))){
 				// skip if out of scope
-				if (((void*)*head)+elements > (void*)elmPos){ // TODO: change to structure size
+				if (((void*)*head)+elements > (void*)elmPos)
 					*elmPos = strdup(tok);
-				}
+
 				elmPos++;
 				cnt++;
 			}
@@ -103,7 +119,9 @@ void getfields(char* buff, void **head, size_t elements) {
 /*
  * readFile() : Read CSV containing the papers into memory
  *
- * Arguments : -
+ * Arguments : - CSV filename
+ * 			   - pointer ** head of linked list
+ * 			   - element size
  *
  * Return : 0 on success, Error code otherwise
  */
@@ -173,7 +191,6 @@ listFiles () {
 
 	if (!ret)
 		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
-			// TODO: fix colspan... simplify (macro?)
 			cgiTag(tt_TR);
 			cgiTag(tt_TD, NULL);
 			cgiOut("%s", cur->author);
@@ -188,6 +205,52 @@ listFiles () {
 			(void)sprintf(url, "display.cgi?id=%ld", cur->id);
 			cgiTag(tt_A, url);
 			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut ("&nbsp;");
+			cgiTagClose(tt_TR);
+		}
+	cgiTagClose(tt_DIV);
+
+	return ret;
+}
+
+/*
+ * listProjects() : print a list of projects in CSV file
+ *
+ * Arguments : -
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int
+listProjects () {
+	// TODO: add session ID to force visiting site, or use hashes only
+	int ret = readFile(PRJDB, (void**)&phead, sizeof(prjd_t));
+
+	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_TABLE);
+
+	if (!ret)
+		for (prjd_t * cur = phead; ((cur)); cur=cur->next){
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->partner);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiTag(tt_A, cur->link);
+			cgiOut("%s", cur->linkd);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut("%s", cur->descr);
 			cgiTagClose(tt_TR);
 
 			cgiTag(tt_TR);
