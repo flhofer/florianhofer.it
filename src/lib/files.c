@@ -73,32 +73,22 @@ void getfields(char* buff) {
     	// add element to linked list
         push((void**)&fhead, sizeof(filed_t));
 
-    	// start with ID
-    	if ((tok = strtok(line, ";")))
+		char ** elmPos = ((char**)fhead)+2; // Minimum allocation size is 8 bytes
+
+    	// start with ID -> int
+    	if ((tok = strtok(line, ";"))){
 			fhead->id = atoi(tok);
+    	}
 
 		int cnt = 0;
+
 		// continue until end
 		while ((tok = strtok(NULL, ";\n"))){
-			switch (cnt) {
-				case 0:
-					fhead->title = strdup(tok);
-					break;
-				case 1:
-					fhead->author = strdup(tok);
-					break;
-				case 2:
-					fhead->year = strdup(tok);
-					break;
-				case 3:
-					fhead->folder = strdup(tok);
-					break;
-				case 4:
-					fhead->filen = strdup(tok);
-					break;
-				case 5:
-					fhead->target = strdup(tok);
+			// skip if out of scope
+			if (6 > cnt){ // TODO: change to structure size
+				*elmPos = strdup(tok);
 			}
+			elmPos++;
 			cnt++;
 		}
 		// delete element if incomplete or too big
