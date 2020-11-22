@@ -143,8 +143,8 @@ menuMain() {
 	AFULL("Home", "#home", "active", NULL)
 	AFULL("News", "#news", NULL)
 	AFULL("Publications", "#pubs", NULL)
+	AFULL("Projects", "#projects", NULL)
 	AFULL("Locations", "#locations", NULL)
-	AFULL("Kernel patches", "#patch", NULL)
 	cgiTag(tt_A, "javascript:void(0);", "icon", "menuOpen()");
 	cgiTag(tt_I, "fa fa-bars", NULL);
 	// autoclose I/ autoclose A

@@ -13,12 +13,6 @@ int main () {
 	cgi_out = stdout;
 
 	cgiHeader(&headCallBack);
-//    cgiOutI ("<div style=\"padding-left:16px\">\n"
-//    		"<h2>This page is temporarly offline.</h2>\n"
-//    		"<p>Check back in a month or follow development <a href=\"https://github.com/flhofer/florianhofer.it\">here</a></p>\n"
-//    		"<br><br><br><br><p>In the meantime, below a list of published papers</p>\n"
-//    		"</div>\n");
-//
     cgiTag(tt_DIV, "entry-content", NULL);
 
     cgiSection("Florian Hofer", "home");
@@ -64,9 +58,9 @@ int main () {
 
     listFiles();
 
-    cgiSection("Locations", "locations");
+    cgiSection("Projects", "projects");
 
-    cgiSection("Kernel patches", "patch");
+    cgiSection("Locations", "locations");
 
     cgiTagClose(tt_DIV);
 
