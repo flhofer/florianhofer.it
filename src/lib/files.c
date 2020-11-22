@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 
 // -- dummy structure for generic push and pop functions
 struct base {
@@ -64,6 +65,17 @@ typedef struct prjdata {
 } prjd_t;
 
 static prjd_t * phead;
+
+#define NEWSDB "../res/news.csv"
+
+typedef struct newsdata {
+	struct newsdata * next;
+	long timestamp;
+	char* title;
+	char* descr;
+} newsd_t;
+
+static newsd_t * nhead;
 
 /*
  * getfields() : parse buffer and get entry fields for paper specification
@@ -246,6 +258,51 @@ listProjects () {
 			cgiTag(tt_TD, "2");
 			cgiTag(tt_A, cur->link);
 			cgiOut("%s", cur->linkd);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut("%s", cur->descr);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut ("&nbsp;");
+			cgiTagClose(tt_TR);
+		}
+	cgiTagClose(tt_DIV);
+
+	return ret;
+}
+
+/*
+ * listNews() : print a list of news in CSV file
+ *
+ * Arguments : -
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int
+listNews () {
+	// TODO: add session ID to force visiting site, or use hashes only
+	int ret = readFile(NEWSDB, (void**)&nhead, sizeof(newsd_t));
+	char buf[80];
+	struct tm ts;
+
+	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_TABLE);
+
+	if (!ret)
+		for (newsd_t * cur = nhead; ((cur)); cur=cur->next){
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD, NULL);
+
+			ts = *localtime(&cur->timestamp);
+			strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+			cgiOut("%s", buf);
 			cgiTagClose(tt_TR);
 
 			cgiTag(tt_TR);

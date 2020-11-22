@@ -11,6 +11,7 @@
 	int listFiles ();
 	const char * fileListName (long id);
 	int listProjects ();
+	int listNews ();
 
 	int includeFile(char* fname);
 

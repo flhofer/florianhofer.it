@@ -43,7 +43,7 @@ int main () {
     cgiTag(tt_SPAN, "font-size: medium;"); cgiTag(tt_B, NULL); cgiOut("About");
     cgiTagClose(tt_P);
     cgiTag(tt_P, NULL);
-    cgiOut("Florian Hofer is a Visiting Researcher at the University of California, Berkeley, where he collaborates with Siemens USA on a Real-Time Control Container project.");
+    cgiOutI("Florian Hofer is a Visiting Researcher at the University of California, Berkeley, where he collaborates with Siemens USA on a Real-Time Control Container project.");
     cgiTagClose(tt_P);
     cgiTagClose(tt_DIV);
 
@@ -54,6 +54,8 @@ int main () {
 
     cgiSection("News", "news");
 
+    listNews();
+
     cgiSection("Publications", "pubs");
 
     listFiles();
@@ -63,6 +65,10 @@ int main () {
     listProjects();
 
     cgiSection("Locations", "locations");
+
+    cgiOutI("Unfortunately there is not much to report here for now, Maybe I'll put some updates once this pandemic is over");
+    BR
+	BR
 
     cgiTagClose(tt_DIV);
 
