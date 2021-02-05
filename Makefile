@@ -1,4 +1,4 @@
-VERSION = 0.1
+VERSION = 0.2
 GIT_VERSION := "$(shell git describe --abbrev=7 --always --tags)"
 CC?=$(CROSS_COMPILE)gcc
 AR?=$(CROSS_COMPILE)ar
@@ -47,7 +47,7 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 $(BINDIR):
-	mkdir -p $(BINDIR)
+	mkdir -p www/$(BINDIR)
 
 # Include dependency files, automatically generate them if needed.
 -include $(addprefix $(OBJDIR)/,$(sources:.c=.d))

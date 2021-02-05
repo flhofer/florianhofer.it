@@ -8,8 +8,12 @@
 #ifndef _FILES_H_
 	#define _FILES_H_
 
-	void listFiles ();
-	const char * fileListName (int id);
+	int listFiles ();
+	const char * fileListName (long id);
+	int listProjects ();
+	int listNews ();
+
+	int includeFile(char* fname);
 
 	#define FBUFSZ 1024
 

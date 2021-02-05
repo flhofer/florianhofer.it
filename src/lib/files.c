@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 
 // -- dummy structure for generic push and pop functions
 struct base {
@@ -35,11 +36,11 @@ void pop(void ** head) {
     *head = next_node;
 }
 
-#define FILEDB "../res/files.csv" // TODO: check, httpd specific
+#define FILEDB "../res/files.csv"
 
 typedef struct filedata {
 	struct filedata * next;
-	int id;		// TODO: change id to 128 bit hash or use session ID
+	long id;		// TODO: change id to 128 bit hash or use session ID
 	char* title;
 	char* author;
 	char* year;
@@ -50,106 +51,312 @@ typedef struct filedata {
 
 static filed_t * fhead;
 
-static char fbuff [FBUFSZ];
+#define PRJDB "../res/prj.csv"
 
-static void getfields(char* buff) {
+typedef struct prjdata {
+	struct prjdata * next;
+	long id;
+	char* title;
+	char* years;
+	char* partner;
+	char* link;
+	char* linkd;
+	char* descr;
+} prjd_t;
+
+static prjd_t * phead;
+
+#define NEWSDB "../res/news.csv"
+
+typedef struct newsdata {
+	struct newsdata * next;
+	long timestamp;
+	char* title;
+	char* descr;
+} newsd_t;
+
+static newsd_t * nhead;
+
+/*
+ * getfields() : parse buffer and get entry fields for paper specification
+ *
+ * Arguments : - pointer to buffer containing a CSV line
+ * 			   - pointer ** head of linked list
+ * 			   - element size
+ *
+ * Return : -
+ */
+static
+void getfields(char* buff, void **head, size_t elements) {
 	char* tok;
 	char* rest = buff;
 
-	// TODO: missing null check
-	if ('#' == *buff) // skip if commented out
+	if ((!buff) || '#' == *buff) // skip if commented out
     	return;
 
-    while ((tok = strtok_r(buff, "\n", &rest))) {
-    	buff = NULL; // reset after first
-    	char * line = strdup(tok); // new line to scan
+	if ((tok = strtok_r(buff, "\n", &rest)))
+		do {
+			char * line = strdup(tok); // new line to scan
 
-    	// add element to linked list
-        push((void**)&fhead, sizeof(filed_t));
+			// add element to linked list
+			push(head, elements);
 
-    	// start with ID
-    	if ((tok = strtok(line, ";")))
-			fhead->id = atoi(tok);
+			char ** elmPos = ((char**)*head);
+			elmPos++;
 
-		int cnt = 0;
-		// continue until end
-		while ((tok = strtok(NULL, ";\n"))){
-			switch (cnt) {
-				case 0:
-					fhead->title = strdup(tok);
-					break;
-				case 1:
-					fhead->author = strdup(tok);
-					break;
-				case 2:
-					fhead->year = strdup(tok);
-					break;
-				case 3:
-					fhead->folder = strdup(tok);
-					break;
-				case 4:
-					fhead->filen = strdup(tok);
-					break;
-				case 5:
-					fhead->target = strdup(tok);
+			// start with ID -> int
+			if ((tok = strtok(line, ";"))){
+				*elmPos = (void*) atol(tok);
+				elmPos++;
 			}
-			cnt++;
+
+			int cnt = 0;
+
+			// continue until end
+			while ((tok = strtok(NULL, ";\n"))){
+				// skip if out of scope
+				if (((void*)*head)+elements > (void*)elmPos)
+					*elmPos = strdup(tok);
+
+				elmPos++;
+				cnt++;
+			}
+			// delete element if incomplete or too big
+			if (((void*)*head)+elements != (void*)elmPos)
+				pop(head);
 		}
-		// delete element if incomplete or too big
-		if (6 < cnt || 6 > cnt)
-			pop((void**)fhead);
-    }
+		while ((tok = strtok_r(NULL, "\n", &rest)));
 }
 
-static int readFile () {
+/*
+ * readFile() : Read CSV containing the papers into memory
+ *
+ * Arguments : - CSV filename
+ * 			   - pointer ** head of linked list
+ * 			   - element size
+ *
+ * Return : 0 on success, Error code otherwise
+ */
+static
+int readFile (const char * filename, void **head, size_t elements) {
     FILE* stream;
+    char fbuff [FBUFSZ];
 
-    if ((stream = fopen(FILEDB, "r"))) {
+    if ((stream = fopen(filename, "r"))) {
 		while (fgets(fbuff, FBUFSZ, stream))
 		{
-			char* tmp = strdup(fbuff); // duplicate for file change?
-			getfields(tmp);
 			// NOTE strtok clobbers tmp
+			char* tmp = strdup(fbuff);
+			getfields(tmp, head, elements);
 			free(tmp);
 		}
 		fclose(stream);
-    }
-    else
-    	cgiOut("<h2>warn: file %s not found: %s </h2>\n", FILEDB, strerror(errno));
 
-    return 0;
+		return 0;
+    }
+
+    cgiOut("<h2>warn: file %s not found: %s </h2>\n", FILEDB, strerror(errno));
+
+    return ENFILE;
 }
 
-const char * fileListName (int id) {
+/*
+ * fileListName() : get the full file path of the entry no
+ *
+ * Arguments : - id or entry number
+ *
+ * Returns : Path on success, NULL on fail
+ */
+const char *
+fileListName (long id) {
 
-	(void)readFile();
-
-	for (filed_t * cur = fhead; ((cur)); cur=cur->next){
-
-		if (id == cur->id) {
-			char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
-			*fn = '\0';
-			// TODO: clean up the folder mess
-			(void)strcat(fn, "../");
-			(void)strcat(fn, cur->folder);
-			(void)strcat(fn, "/");
-			(void)strcat(cur->folder, "/");
-			(void)strcat(fn, cur->filen);
-			return fn;
+	if (!readFile(FILEDB, (void**)&fhead, sizeof(filed_t)))
+		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
+			if (id == cur->id) {
+				char* fn = malloc(strlen(cur->folder) + strlen(cur->filen) +2 + 10);
+				// TOOD: fix and clean
+				*fn = '\0';
+				(void)strcat(fn, "../");
+				(void)strcat(fn, cur->folder);
+				(void)strcat(fn, "/");
+				(void)strcat(fn, cur->filen);
+				return fn;
+			}
 		}
-	}
 	return NULL;
 }
 
-void listFiles () {
+/*
+ * listFiles() : print a list of documents in CSV file
+ *
+ * Arguments : -
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int
+listFiles () {
 	// TODO: add session ID to force visiting site, or use hashes only
-	(void)readFile();
+	int ret = readFile(FILEDB, (void**)&fhead, sizeof(filed_t));
 
-	cgiOut("<div style=\"padding-left:16px\"><table>\n");
-	for (filed_t * cur = fhead; ((cur)); cur=cur->next){
-		cgiOut ("<tr><td>%s</td><td>%s</td></tr>\n", cur->author, cur->year);
-		cgiOut ("<tr><td colspan=2><a href=\"display.cgi?id=%d\"> %s</a></td></tr>\n", cur->id, cur->title);
-		cgiOut ("<tr><td colspan=2>&nbsp;</td></tr>\n");
-	}
-	cgiOut("</table></div>\n");
+	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_TABLE);
+
+	if (!ret)
+		for (filed_t * cur = fhead; ((cur)); cur=cur->next){
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->author);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->year);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			char url[20];
+			(void)sprintf(url, "display.cgi?id=%ld", cur->id);
+			cgiTag(tt_A, url);
+			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut ("&nbsp;");
+			cgiTagClose(tt_TR);
+		}
+	cgiTagClose(tt_DIV);
+
+	return ret;
 }
+
+/*
+ * listProjects() : print a list of projects in CSV file
+ *
+ * Arguments : -
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int
+listProjects () {
+	// TODO: add session ID to force visiting site, or use hashes only
+	int ret = readFile(PRJDB, (void**)&phead, sizeof(prjd_t));
+
+	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_TABLE);
+
+	if (!ret)
+		for (prjd_t * cur = phead; ((cur)); cur=cur->next){
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->partner);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiTag(tt_A, cur->link);
+			cgiOut("%s", cur->linkd);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut("%s", cur->descr);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut ("&nbsp;");
+			cgiTagClose(tt_TR);
+		}
+	cgiTagClose(tt_DIV);
+
+	return ret;
+}
+
+/*
+ * listNews() : print a list of news in CSV file
+ *
+ * Arguments : -
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int
+listNews () {
+	// TODO: add session ID to force visiting site, or use hashes only
+	int ret = readFile(NEWSDB, (void**)&nhead, sizeof(newsd_t));
+	char buf[80];
+	struct tm ts;
+
+	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_TABLE);
+
+	if (!ret)
+		for (newsd_t * cur = nhead; ((cur)); cur=cur->next){
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD, NULL);
+
+			ts = *localtime(&cur->timestamp);
+			strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+			cgiOut("%s", buf);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut("%s", cur->descr);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "2");
+			cgiOut ("&nbsp;");
+			cgiTagClose(tt_TR);
+		}
+	cgiTagClose(tt_DIV);
+
+	return ret;
+}
+
+/*
+ * includeFile() : reads and prints a file to out
+ *
+ * Arguments : - filename to include in output
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int 
+includeFile(char* fname){
+
+	if (!fname)
+		return -1;
+
+	// build filename
+	// TODO: add function, external append directory prefix + sanitize
+	char * fn = malloc (strlen(fname) + 4); // + ../\0
+	(void)strcpy(fn , "../");
+	(void)strcat(fn, fname);
+
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+
+    fp = fopen(fn, "r");
+    if (fp == NULL){
+     	free(fn);
+        return -2; // does not exist
+	}
+	
+    while ((read = getline(&line, &len, fp)) != -1) 
+		cgiOut("%s", line);
+		
+    fclose(fp);
+
+    free(line);
+	free (fn);
+	return 0;    
+}
+

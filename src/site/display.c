@@ -20,31 +20,38 @@ int main () {
 	cgi_out = stdout;
 
 	char * data = getenv("QUERY_STRING");
-	int id;
+	long id;
 	if(data == NULL){
 		// TODO: add error message out macro/function to decorator, EG 404
-		cgiHeader();
+		cgiHeader(NULL);
 		cgiOut("<P>Error! Error in passing data from form to script.");
-	    cgiFooter();
+	    cgiFooter(NULL);
 	}
-	else if(sscanf(data,"id=%d",&id)!=1){
-		cgiHeader();
+	else if(sscanf(data,"id=%ld",&id)!=1){
+		cgiHeader(NULL);
 		cgiOut("<P>Error! Invalid data. Data must be numeric.");
-		cgiFooter();
+		cgiFooter(NULL);
 	}
 	else {
 		const char * path = fileListName(id);
 
 		// TODO: fix return value evaluations and exceptions
 		if (NULL == path){
-			cgiHeader();
-			cgiOut("<P>Error! Path data. %d</p>", id);
-		    cgiFooter();
+			cgiHeader(NULL);
+			cgiOut("<P>Error! Path data. %ld</p>", id);
+		    cgiFooter(NULL);
 		    return 0;
 		}
 
+
 		struct stat st;
-		stat(path, &st);
+				
+		if (access(path, F_OK) || !stat(path, &st) || 0 == st.st_size){
+			cgiHeader(NULL);
+			cgiOut("<P>Error! File not found.</p>", NULL); // FIXME: internal server error if I remove the NULL - Docker container only
+			cgiFooter(NULL);
+			return 0;
+		}
 
 		cgiOut("Content-type: application/pdf\r\n");
 		cgiOut("Content-Disposition: inline; filename=\"document.pdf\"\r\n");
