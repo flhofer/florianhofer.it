@@ -36,7 +36,7 @@ int main () {
 	cgiOutI("Berkeley"); BR
 	cgiOutI("USA"); BR
 	cgiOutI("+1 530 4074635"); BR
-	cgiOutI("flhofer@berkeley.edu ("); AFULL("PGP", "index.html@p=158.html", NULL); cgiOut(")");
+	cgiOutI("flhofer@berkeley.edu ("); AFULL("PGP", "docmisc/public.pgp", NULL); cgiOut(")");
     cgiTagClose(tt_DIV);
 
     cgiTag(tt_P, NULL);
