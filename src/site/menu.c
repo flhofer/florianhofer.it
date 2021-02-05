@@ -23,7 +23,7 @@ int main () {
     cgiTag(tt_DIV, "", "", "display: inline; margin: 5px 10px; float: right;");
     cgiTag(tt_SPAN, "font-family: arial,sans-serif;");
     cgiTag(tt_SPAN, "font-size: medium;");
-    cgiTag(tt_IMG, "../res/portrait.png", "195", "247"," class=\"\" border=\"0\"");
+    cgiTag(tt_IMG, "../images/portrait.png", "195", "247"," class=\"\" border=\"0\"");
     cgiTagClose(tt_DIV);
 
     cgiTag(tt_P, NULL);
