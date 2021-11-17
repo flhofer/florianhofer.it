@@ -52,6 +52,7 @@ typedef struct filedata {
 static filed_t * fhead;
 
 #define PRJDB "../res/prj.csv"
+#define LOCDB "../res/locations.csv"
 
 typedef struct prjdata {
 	struct prjdata * next;
@@ -141,6 +142,9 @@ static
 int readFile (const char * filename, void **head, size_t elements) {
     FILE* stream;
     char fbuff [FBUFSZ];
+
+    while (*head)
+    	pop(head);
 
     if ((stream = fopen(filename, "r"))) {
 		while (fgets(fbuff, FBUFSZ, stream))
@@ -237,9 +241,14 @@ listFiles () {
  * Return: 0 on success, error code otherwise
  */
 int
-listProjects () {
+listProjects (int op) {
 	// TODO: add session ID to force visiting site, or use hashes only
-	int ret = readFile(PRJDB, (void**)&phead, sizeof(prjd_t));
+
+	int ret;
+	if (op)
+		ret = readFile(LOCDB, (void**)&phead, sizeof(prjd_t));
+	else
+		ret = readFile(PRJDB, (void**)&phead, sizeof(prjd_t));
 
 	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
 	cgiTag(tt_TABLE);

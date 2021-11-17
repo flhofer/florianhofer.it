@@ -62,13 +62,11 @@ int main () {
 
     cgiSection("Projects", "projects");
 
-    listProjects();
+    listProjects(0);
 
     cgiSection("Locations", "locations");
 
-    cgiOutI("Unfortunately there is not much to report here for now, Maybe I'll put some updates once this pandemic is over");
-    BR
-	BR
+    listProjects(1); // Same formatting
 
     cgiTagClose(tt_DIV);
 
