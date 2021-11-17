@@ -52,7 +52,6 @@ typedef struct filedata {
 static filed_t * fhead;
 
 #define PRJDB "../res/prj.csv"
-#define LOCDB "../res/locations.csv"
 
 typedef struct prjdata {
 	struct prjdata * next;
@@ -66,6 +65,21 @@ typedef struct prjdata {
 } prjd_t;
 
 static prjd_t * phead;
+
+#define LOCDB "../res/locations.csv"
+
+typedef struct locdata {
+	struct locdata * next;
+	long id;
+	char* title;
+	char* dates;
+	char* location;
+	char* link;
+	char* linkd;
+	char* descr;
+} locd_t;
+
+static locd_t * lhead;
 
 #define NEWSDB "../res/news.csv"
 
@@ -241,14 +255,9 @@ listFiles () {
  * Return: 0 on success, error code otherwise
  */
 int
-listProjects (int op) {
+listProjects () {
 	// TODO: add session ID to force visiting site, or use hashes only
-
-	int ret;
-	if (op)
-		ret = readFile(LOCDB, (void**)&phead, sizeof(prjd_t));
-	else
-		ret = readFile(PRJDB, (void**)&phead, sizeof(prjd_t));
+	int ret = readFile(PRJDB, (void**)&phead, sizeof(prjd_t));
 
 	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
 	cgiTag(tt_TABLE);
@@ -276,6 +285,55 @@ listProjects (int op) {
 
 			cgiTag(tt_TR);
 			cgiTag(tt_TD, "2");
+			cgiOut ("&nbsp;");
+			cgiTagClose(tt_TR);
+		}
+	cgiTagClose(tt_DIV);
+
+	return ret;
+}
+
+/*
+ * listLocations() : print a list of locations in CSV file
+ *
+ * Arguments : -
+ *
+ * Return: 0 on success, error code otherwise
+ */
+int
+listLocations () {
+	// TODO: add session ID to force visiting site, or use hashes only
+	int ret = readFile(LOCDB, (void**)&lhead, sizeof(prjd_t));
+
+	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_TABLE);
+
+	if (!ret)
+		for (locd_t * cur = lhead; ((cur)); cur=cur->next){
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->title);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->dates);
+			cgiTagClose(tt_TD);
+			cgiTag(tt_TD, NULL);
+			cgiOut("%s", cur->location);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "3");
+			cgiTag(tt_A, cur->link);
+			cgiOut("%s", cur->linkd);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "3");
+			cgiOut("%s", cur->descr);
+			cgiTagClose(tt_TR);
+
+			cgiTag(tt_TR);
+			cgiTag(tt_TD, "3");
 			cgiOut ("&nbsp;");
 			cgiTagClose(tt_TR);
 		}

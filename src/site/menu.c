@@ -62,11 +62,11 @@ int main () {
 
     cgiSection("Projects", "projects");
 
-    listProjects(0);
+    listProjects();
 
     cgiSection("Locations", "locations");
 
-    listProjects(1); // Same formatting
+    listLocations();
 
     cgiTagClose(tt_DIV);
 
