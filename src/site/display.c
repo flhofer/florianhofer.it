@@ -46,7 +46,7 @@ int main () {
 
 		struct stat st;
 				
-		if (access(path, F_OK) || !stat(path, &st) || 0 == st.st_size){
+		if (access(path, F_OK) || stat(path, &st) || 0 == st.st_size){
 			cgiHeader(NULL);
 			cgiOut("<P>Error! File not found.</p>", NULL); // FIXME: internal server error if I remove the NULL - Docker container only
 			cgiFooter(NULL);
