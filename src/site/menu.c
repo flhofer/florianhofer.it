@@ -28,22 +28,22 @@ int main () {
 
     cgiTag(tt_P, NULL);
     cgiTag(tt_SPAN, "font-size: medium;");cgiOut("<!--Florian Hofer-->"); BR
-    cgiOutI("Visiting Researcher"); BR
-    AFULL("EECS Department", "https://eecs.berkeley.edu", NULL); BR
+    cgiOutI("Freelancer and PostDoc Researcher"); BR
+    AFULL("Free University of Bolzano", "https://www.unibz.it", NULL); BR
 	AFULL("University of California", "https://www.berkeley.edu", NULL); BR
-	cgiOutI("DOP 545P"); BR
-	cgiOutI("Cory Hall ("); AFULL("map", "https://goo.gl/maps/B4ofynZUePY2piMy8", NULL); cgiOut(")"); BR
-	cgiOutI("Berkeley"); BR
-	cgiOutI("USA"); BR
-	cgiOutI("+1 530 4074635"); BR
-	cgiOutI("flhofer@berkeley.edu ("); AFULL("PGP", "../docmisc/public.pgp", NULL); cgiOut(")");
+	cgiOutI("POS 1.14"); BR
+	cgiOutI("Faculty of Computer Science ("); AFULL("map", "https://goo.gl/maps/BDccUeNKTtdwd7kn7", NULL); cgiOut(")"); BR
+	cgiOutI("Bolzano"); BR
+	cgiOutI("IT"); BR
+	cgiOutI("+39 0471 016029"); BR
+	cgiOutI("florian.hofer@unibz.it ("); AFULL("PGP", "../docmisc/public.pgp", NULL); cgiOut(")");
     cgiTagClose(tt_DIV);
 
     cgiTag(tt_P, NULL);
     cgiTag(tt_SPAN, "font-size: medium;"); cgiTag(tt_B, NULL); cgiOut("About");
     cgiTagClose(tt_P);
     cgiTag(tt_P, NULL);
-    cgiOutI("Florian Hofer is a Visiting Researcher at the University of California, Berkeley, where he collaborates with Siemens USA on a Real-Time Control Container project.");
+    cgiOutI("Florian Hofer is a Freelancer for Industrial automation and Industry 4.0, and a PostDoc Researcher. He was previously a Visiting Researcher at the University of California, Berkeley, where he collaborated with Siemens USA on a Real-Time Control Container project.");
     cgiTagClose(tt_P);
     cgiTagClose(tt_DIV);
 
