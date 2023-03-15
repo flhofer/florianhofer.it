@@ -1,14 +1,53 @@
 #include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
 #include "site.h"
 #include "decorator.h"
 #include "files.h"
 
-void headCallBack () {
+void
+headCallBack () {
 	// TODO: return value
 	(void)includeFile("analyticstracking.inc");
 }
 
-int main () {
+/*
+ *
+ */
+int
+arrangeImg(char * img1,...){
+	va_list imgList;
+	va_start(imgList, img1);
+
+    cgiTag(tt_DIV, NULL);
+
+    char size[5];
+    (void)sprintf(size, "%i", 192); // TODO: replace with parameter?
+
+    char * path = NULL;
+	if ((path = malloc(255)))
+		// repeat until NULLchar
+		do
+		{
+			(void)strcpy(path , "../images/");
+			cgiTag(tt_IMG, strcat(path, img1), size, size," class=\"\" border=\"0\"");
+
+			;
+		}
+	while ((img1 == va_arg(imgList, char *)));
+
+	free(path);
+	cgiTagClose(tt_DIV);
+
+	va_end(imgList);
+	return 0;
+}
+
+/*
+ *
+ */
+int
+main () {
 	// assign file to standard out TODO: change to parameter
 	cgi_out = stdout;
 
@@ -47,26 +86,13 @@ int main () {
     cgiTagClose(tt_P);
     cgiTagClose(tt_DIV);
 
-//    <div>
-//    <p>He was previously assistant professor at the <a href="https://www.unibz.it/">Free University of Bozen Bolzano</a>¹ (2014-2017). He holds a PhD from the Free University of Bozen-Bolzano (2014), and a Diplom (MSc.) from <a href="https://tu-dresden.de/?set_language=en">TU Dresden</a> (2010; <a href="wp-content/uploads/dresden.jpg">not this Dresden</a>). He spent time as visitor at the Max-Planck Institute for Informatics (2016), the <a href="http://www.uq.edu.au/">University of Queensland</a> (2015), <a href="http://www.research.att.com/">AT&amp;T Labs-Research</a> (2013), the <a href="https://ucsd.edu/">University of California, San Diego</a> (2012), and has previous industrial experience from <a href="http://www.globalfoundries.com/">Globalfoundries </a>(2010) and <a href="https://www.siemens.com/">Siemens IT</a> (2009). He has published 16 papers at premier² conferences in the area of data science and management (and more than 44 papers in total).</p>
-//    <p style="text-align: right;"><a href="https://scholar.google.de/citations?user=ymKWDvoAAAAJ&amp;hl=en"><img class="alignnone size-full wp-image-154" src="wp-content/uploads/scholar.png" alt="" width="78" height="30"></a> <a href="http://dblp.uni-trier.de/pers/hd/r/Razniewski:Simon"><img class="alignnone size-full wp-image-153" src="wp-content/uploads/dblp.png" alt="" width="61" height="30"></a><a href="https://tools.wmflabs.org/reasonator/?&amp;q=51903121"><img class="alignnone wp-image-180" src="wp-content/uploads/wd-300x105.jpg" alt="" width="89" height="31" srcset="wp-content/uploads/wd-300x105.jpg 300w, wp-content/uploads/wd.jpg 426w" sizes="(max-width: 89px) 100vw, 89px"></a></p>
-//    </div>
-
     cgiSection("News", "news");
 
     listNews();
 
-    cgiSection("Publications", "pubs");
+    cgiSection("Project and collaboration partners", "partner");
 
-    listFiles();
-
-    cgiSection("Projects", "projects");
-
-    listProjects();
-
-    cgiSection("Locations", "locations");
-
-    listLocations();
+    arrangeImg("bts.jpg");
 
     cgiTagClose(tt_DIV);
 
