@@ -233,7 +233,7 @@ listFiles () {
 			cgiTag(tt_TD, "2");
 			char url[20];
 			(void)sprintf(url, "display.cgi?id=%ld", cur->id);
-			cgiTag(tt_A, url);
+			cgiTag(tt_A, url, NULL);
 			cgiOut("%s", cur->title);
 			cgiTagClose(tt_TR);
 
@@ -274,7 +274,7 @@ listProjects () {
 
 			cgiTag(tt_TR);
 			cgiTag(tt_TD, "2");
-			cgiTag(tt_A, cur->link);
+			cgiTag(tt_A, cur->link, NULL);
 			cgiOut("%s", cur->linkd);
 			cgiTagClose(tt_TR);
 
@@ -323,7 +323,7 @@ listLocations () {
 
 			cgiTag(tt_TR);
 			cgiTag(tt_TD, "3");
-			cgiTag(tt_A, cur->link);
+			cgiTag(tt_A, cur->link, NULL);
 			cgiOut("%s", cur->linkd);
 			cgiTagClose(tt_TR);
 

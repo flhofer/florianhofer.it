@@ -36,7 +36,7 @@ const
 		{ tt_DIV,	"DIV", {"class", "id", "style", NULL}, -1},
 		{ tt_A,		"A", {"href", "class", "onclick", NULL}, 0},
 		{ tt_SPAN,	"SPAN", {"style", NULL}, 0},
-		{ tt_IMG,	"IMG", {"src", "width", "height", NULL}, 1},
+		{ tt_IMG,	"IMG", {"src", "width", "height", NULL}, 1}, //TODO: attach other parameters in tag
 		{ tt_TABLE,	"TABLE", {NULL}, -1},
 		{ tt_TR,	"TR", {NULL}, -1},
 		{ tt_TD,	"TD", {"colspan", NULL}, 0},
