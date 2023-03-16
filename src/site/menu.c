@@ -65,7 +65,7 @@ main () {
     cgiTag(tt_IMG, "../images/portrait.png", "195", "247"," class=\"\" border=\"0\"");
     cgiTagClose(tt_DIV);
 
-    cgiTag(tt_P, NULL);
+    cgiTag(tt_P);
     cgiTag(tt_SPAN, "font-size: medium;");cgiOut("<!--Florian Hofer-->"); BR
     cgiOutI("Freelancer and PostDoc Researcher"); BR
     AFULL("Free University of Bolzano", "https://www.unibz.it", NULL); BR
@@ -78,10 +78,10 @@ main () {
 	cgiOutI("florian.hofer@unibz.it ("); AFULL("PGP", "../docmisc/public.pgp", NULL); cgiOut(")");
     cgiTagClose(tt_DIV);
 
-    cgiTag(tt_P, NULL);
+    cgiTag(tt_P);
     cgiTag(tt_SPAN, "font-size: medium;"); cgiTag(tt_B, NULL); cgiOut("About");
     cgiTagClose(tt_P);
-    cgiTag(tt_P, NULL);
+    cgiTag(tt_P);
     cgiOutI("Florian Hofer is a Freelancer for Industrial automation and Industry 4.0, and a PostDoc Researcher. He was previously a Visiting Researcher at the University of California, Berkeley, where he collaborated with Siemens USA on a Real-Time Control Container project.");
     cgiTagClose(tt_P);
     cgiTagClose(tt_DIV);

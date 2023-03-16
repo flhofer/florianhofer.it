@@ -36,7 +36,7 @@ const
 		{ tt_DIV,	"DIV", {"class", "id", "style", NULL}, -1},
 		{ tt_A,		"A", {"href", "class", "onclick", NULL}, 0},
 		{ tt_SPAN,	"SPAN", {"style", NULL}, 0},
-		{ tt_IMG,	"IMG", {"src", "width", "height", NULL}, 1},
+		{ tt_IMG,	"IMG", {"src", "width", "height", NULL}, 1}, //TODO: attach other parameters in tag
 		{ tt_TABLE,	"TABLE", {NULL}, -1},
 		{ tt_TR,	"TR", {NULL}, -1},
 		{ tt_TD,	"TD", {"colspan", NULL}, 0},
@@ -80,8 +80,10 @@ cgiTagParams2 (va_list parList, const struct tagDefault * tag){
 	// repeat until NULL
 	while ((t = *parTags))
 	{
-		if ((p = va_arg(parList, char *)))
-			cgiOut(" %s=\"%s\"", t, p);
+		if ((p = va_arg(parList, char *))) {
+			if (p[0] != '\0')
+				cgiOut(" %s=\"%s\"", t, p);
+		}
 		else
 			break;
 		parTags++;
@@ -138,7 +140,7 @@ unrollStack(){
 
 static int
 menuMain() {
-	cgiTag(tt_DIV, "topnav", "myTopnav");
+	cgiTag(tt_DIV, "topnav", "myTopnav", NULL);
 
 	AFULL("Home", "#home", "active", NULL)
 	AFULL("News", "#news", NULL)
@@ -282,7 +284,7 @@ int cgiHeader(void (*callb)()) {
 }
 
 int cgiFooter(void (*callb)()) {
-	cgiTag(tt_DIV, "bnavbar", "bnav");
+	cgiTag(tt_DIV, "bnavbar", "bnav", NULL);
 	cgiTagIndent();
 	cgiOut ("&#9400; 2019-2021 Florian Hofer. Proudly implemented using C. V%s\n", VERSION);
 	cgiTagClose(tt_DIV);
