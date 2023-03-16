@@ -216,7 +216,7 @@ listFiles () {
 	// TODO: add session ID to force visiting site, or use hashes only
 	int ret = readFile(FILEDB, (void**)&fhead, sizeof(filed_t));
 
-	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_DIV, "", "", "padding-left:16px");
 	cgiTag(tt_TABLE);
 
 	if (!ret)
@@ -259,7 +259,7 @@ listProjects () {
 	// TODO: add session ID to force visiting site, or use hashes only
 	int ret = readFile(PRJDB, (void**)&phead, sizeof(prjd_t));
 
-	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_DIV, "", "", "padding-left:16px");
 	cgiTag(tt_TABLE);
 
 	if (!ret)
@@ -305,7 +305,7 @@ listLocations () {
 	// TODO: add session ID to force visiting site, or use hashes only
 	int ret = readFile(LOCDB, (void**)&lhead, sizeof(prjd_t));
 
-	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_DIV, "", "", "padding-left:16px");
 	cgiTag(tt_TABLE);
 
 	if (!ret)
@@ -356,7 +356,7 @@ listNews () {
 	char buf[80];
 	struct tm ts;
 
-	cgiTag(tt_DIV, NULL, NULL, "padding-left:16px");
+	cgiTag(tt_DIV, "", "", "padding-left:16px");
 	cgiTag(tt_TABLE);
 
 	if (!ret)
