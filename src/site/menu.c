@@ -34,7 +34,7 @@ arrangeImg(char * img1,...){
 
 			;
 		}
-	while ((img1 == va_arg(imgList, char *)));
+	while ((img1 = va_arg(imgList, char *)));
 
 	free(path);
 	cgiTagClose(tt_DIV);
