@@ -92,7 +92,8 @@ main () {
 
     cgiSection("Project and collaboration partners", "partner");
 
-    arrangeImg("bts.jpg");
+    arrangeImg("bts.jpg", "unibz.jpg", "stadtwerke.jpg", "ttcontrol.jpg",
+    		"berkeley.jpg", "siemens.jpg", "systems.jpg", NULL);
 
     cgiTagClose(tt_DIV);
 
