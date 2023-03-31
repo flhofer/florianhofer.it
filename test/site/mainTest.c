@@ -25,7 +25,7 @@ START_TEST(checkValueTest)
 }
 END_TEST
 
-void orchestrator_resmgnt (Suite * s) {
+void site_main (Suite * s) {
 	TCase *tc1 = tcase_create("main");
 	tcase_add_test(tc1, checkValueTest);
 

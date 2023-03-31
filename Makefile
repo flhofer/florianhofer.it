@@ -8,11 +8,15 @@ DEBUG=1
 OBJDIR = build
 BINDIR = cgi-bin
 
-sources = menu.c \
-		  display.c
+sources = menu.c display.c \
+		  test.c
+testsrc = $(notdir $(shell find test/lib test/site -name '*.c'))
+testbins = $(testsrc:%.c=%.o)
+
 
 TARGETS = $(sources:.c=)
 LIBS	= -lmycgi #-lsqlite3 #-ljson-c
+TLIBS	= -lcheck -lm -lrt -lsubunit $(LIBS)
 
 CFLAGS ?= -Wall -Wno-nonnull -march=native
 CPPFLAGS += -D _GNU_SOURCE -I src/include
@@ -30,6 +34,9 @@ endif
 
 VPATH	= src/site:
 VPATH	+= src/lib:
+VPATH	+= test:
+VPATH	+= test/lib:
+VPATH	+= test/site:
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) -c $< $(CFLAGS) $(CPPFLAGS) $(EXTRA_LIBS) -o $@
@@ -39,7 +46,7 @@ $(OBJDIR)/%.d: %.c | $(OBJDIR)
 	@$(CC) -MM $(CFLAGS) $(CPPFLAGS) $< | sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' > $@ || rm -f $@
 
 .PHONY: all
-all: $(TARGETS)
+all: $(TARGETS) check
 	chmod 755 www/cgi-bin/*.cgi
 	#chown 1000:1000 www/cgi-bin/*.cgi commented for CI
 
@@ -48,7 +55,7 @@ $(OBJDIR):
 
 $(BINDIR):
 	mkdir -p www/$(BINDIR)
-
+	
 # Include dependency files, automatically generate them if needed.
 -include $(addprefix $(OBJDIR)/,$(sources:.c=.d))
 
@@ -59,6 +66,12 @@ menu: $(addprefix $(OBJDIR)/,menu.o libmycgi.a) | $(BINDIR)
 display: $(addprefix $(OBJDIR)/,display.o libmycgi.a) | $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BINDIR)/$@.cgi $< $(LIBS)
 
+check: $(addprefix $(OBJDIR)/,test.o libmycgi.a $(testbins))  | $(BINDIR)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(addprefix $(OBJDIR)/,$(testbins)) -o $@_test $< $(TLIBS)
+	
+test: check
+	./check_test
+	
 # lib containing include lib in one binary file
 LIBOBJS =$(addprefix $(OBJDIR)/,decorator.o files.o)
 $(OBJDIR)/libmycgi.a: $(LIBOBJS)

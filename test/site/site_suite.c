@@ -12,9 +12,9 @@
 
 #include "mainTest.h"
 
-Suite * orchestrator_suite(void) {
+Suite * site_suite(void) {
 
-	Suite *s = suite_create("Orchestrator");
+	Suite *s = suite_create("Site-Main");
 
 	// call tests and append test cases	
 

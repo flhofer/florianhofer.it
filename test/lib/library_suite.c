@@ -15,7 +15,7 @@ Suite * library_suite(void) {
 	Suite *s = suite_create("Library");
 
 	// call tests and append test cases	
-	library_decoator(s);
+	library_decorator(s);
 
 	// these use dbgprint. check first
 //	dbg_out = fopen("/dev/null", "w");
