@@ -6,13 +6,14 @@
  */
 
 #ifndef _TEST_H_
-#define _TEST_H_
+	#define _TEST_H_
 
-#include <check.h>
+	#include <check.h>
 
-#include "../src/site/site.h"
+	#include "../src/site/site.h"
 
-// debug output file
-extern FILE  * dbg_out;
+	// debug output file
+	extern FILE  * dbg_out;
+	#define OUTFILE "/tmp/testout.txt"
 
 #endif /* _TEST_H_ */

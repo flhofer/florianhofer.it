@@ -58,3 +58,4 @@ dkms.conf
 /www/cgi-bin/
 
 *.pdf
+/check_test

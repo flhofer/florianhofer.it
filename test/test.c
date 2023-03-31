@@ -11,12 +11,15 @@
 
 // debug output file
 FILE  * dbg_out;
+FILE  * cgi_out;
 
 // ############################ end common global variables ###########################333
 
 // include library and main suite code
 #include "lib/library_suite.h"
 #include "site/site_suite.h"
+
+#include "decorator.h"
 
 #include <time.h>
 #include <stdlib.h>
@@ -25,6 +28,9 @@ int main(void)
 {
 	// init pseudo-random tables
 	srand(time(NULL));
+
+	//prepare output file
+	cgi_out = fopen(OUTFILE, "w");
 
     int nf=0;
     SRunner *sr;
@@ -38,6 +44,7 @@ int main(void)
     nf = srunner_ntests_failed(sr);
     srunner_free(sr);
 
+    fclose(cgi_out);
     return nf == 0 ? 0 : 1;
 }
 
