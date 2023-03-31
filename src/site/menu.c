@@ -5,6 +5,8 @@
 #include "decorator.h"
 #include "files.h"
 
+FILE  * cgi_out;
+
 void
 headCallBack () {
 	// TODO: return value

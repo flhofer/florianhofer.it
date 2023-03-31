@@ -14,6 +14,8 @@
 #include "decorator.h"
 #include "files.h"
 
+FILE  * cgi_out;
+
 #define TSNBUF 8096 // 8kb at a time
 
 int main () {

@@ -10,6 +10,6 @@
 	#define _SITE_H_
 
 	// CGI settings
-	FILE  * cgi_out;
+	extern FILE  * cgi_out;
 
 #endif /* _SITE_H_ */
