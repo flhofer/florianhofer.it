@@ -21,7 +21,7 @@ arrangeImg(char * img1,...){
 	va_list imgList;
 	va_start(imgList, img1);
 
-    cgiTag(tt_DIV, NULL);
+    cgiTag(tt_DIV, "", "", "text-align: center;", NULL);
 
     char size[5];
     (void)sprintf(size, "%i", 192); // TODO: replace with parameter?
