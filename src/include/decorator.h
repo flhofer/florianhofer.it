@@ -57,6 +57,8 @@
 
 	int cgiSection(char * title, char * id);
 
+	int cgiArrangeImg(char * img1,...);
+
 	// Constants
 	#define WEB_TITLE "Florian Hofer - www.florianhofer.it"
 #endif /* _DECORATOR_H_ */

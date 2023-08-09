@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include <errno.h>
 
 // Parameters for tags, to enable defaults and auto-close
@@ -301,3 +302,39 @@ int cgiFooter(void (*callb)()) {
 
 	return 0; // TODO: fix return value
 }
+
+/*
+ *	Prints image tags for the images listed, all in a div
+ *
+ *	Arguments:	string list of filenames, terminated with null
+ *
+ *	Return Value: 0 on success, error code otherwise*/
+int
+cgiArrangeImg(char * img1,...){
+	va_list imgList;
+	va_start(imgList, img1);
+
+    cgiTag(tt_DIV, "", "", "text-align: center;", NULL);
+
+    char size[5];
+    (void)sprintf(size, "%i", 192); // TODO: replace with parameter?
+
+    char * path = NULL;
+	if ((path = malloc(255)))
+		// repeat until NULLchar
+		do
+		{
+			(void)strcpy(path , "../images/");
+			cgiTag(tt_IMG, strcat(path, img1), size, size," class=\"\" border=\"0\"");
+
+			;
+		}
+	while ((img1 = va_arg(imgList, char *)));
+
+	free(path);
+	cgiTagClose(tt_DIV);
+
+	va_end(imgList);
+	return 0; // TODO: fix return value
+}
+

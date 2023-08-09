@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdarg.h>
-#include <string.h>
 #include "site.h"
 #include "decorator.h"
 #include "files.h"
@@ -11,38 +10,6 @@ void
 headCallBack () {
 	// TODO: return value
 	(void)includeFile("analyticstracking.inc");
-}
-
-/*
- *
- */
-int
-arrangeImg(char * img1,...){
-	va_list imgList;
-	va_start(imgList, img1);
-
-    cgiTag(tt_DIV, "", "", "text-align: center;", NULL);
-
-    char size[5];
-    (void)sprintf(size, "%i", 192); // TODO: replace with parameter?
-
-    char * path = NULL;
-	if ((path = malloc(255)))
-		// repeat until NULLchar
-		do
-		{
-			(void)strcpy(path , "../images/");
-			cgiTag(tt_IMG, strcat(path, img1), size, size," class=\"\" border=\"0\"");
-
-			;
-		}
-	while ((img1 = va_arg(imgList, char *)));
-
-	free(path);
-	cgiTagClose(tt_DIV);
-
-	va_end(imgList);
-	return 0;
 }
 
 /*
@@ -94,8 +61,11 @@ main () {
 
     cgiSection("Project and collaboration partners", "partner");
 
-    arrangeImg("partner/bts.jpg", "partner/unibz.jpg", "partner/stadtwerke.jpg", "partner/ttcontrol.jpg",
+    cgiArrangeImg("partner/bts.jpg", "partner/unibz.jpg", "partner/stadtwerke.jpg", "partner/ttcontrol.jpg",
     		"partner/berkeley.jpg", "partner/siemens.jpg", "partner/systems.jpg", NULL);
+
+    cgiSection("Project scope and experience", "projects");
+
 
     cgiTagClose(tt_DIV);
 
